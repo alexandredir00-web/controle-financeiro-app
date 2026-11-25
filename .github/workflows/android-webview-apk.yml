@@ -19,7 +19,12 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Create minimal Android WebView project and build APK
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.5"
+
+      - name: Create Android WebView project and build APK
         run: |
           set -e
           mkdir -p android-app/app/src/main/java/com/alexandredir00/financas360
@@ -152,7 +157,8 @@ jobs:
           EOF
 
           cd android-app
-          gradle assembleDebug --no-daemon
+          gradle wrapper --gradle-version 8.5 --no-daemon
+          ./gradlew assembleDebug --no-daemon
           cp app/build/outputs/apk/debug/app-debug.apk /tmp/financas-360-debug.apk
           ls -lh /tmp/financas-360-debug.apk
 
