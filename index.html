@@ -2,299 +2,364 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Finanças 360º • Lançamentos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Finanças 360º</title>
   <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#206a4e" />
+  <meta name="theme-color" content="#2563eb" />
   <style>
     :root {
-      --primary: #206a4e;
-      --primary-dark: #164b37;
-      --bg: #f3f6f4;
-      --card: #ffffff;
-      --text: #1e293b;
+      --bg-blue: #3b6ef6;
+      --bg-blue-dark: #254edb;
+      --card-blue: #2f5ee0;
+      --soft-panel: #dce6fc;
+      --white: #ffffff;
+      --text-dark: #0f172a;
       --muted: #64748b;
-      --border: #dce4df;
-      --danger: #dc2626;
-      --success: #16a34a;
+      --green: #16a34a;
+      --red: #dc2626;
+      --amber: #f59e0b;
     }
 
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
 
     body {
       margin: 0;
-      background: var(--bg);
-      color: var(--text);
+      background: #1e3a8a;
+      color: var(--white);
       display: flex;
       justify-content: center;
-      padding: 16px;
+      min-height: 100vh;
     }
 
-    .app-container {
+    .phone-frame {
       width: 100%;
       max-width: 480px;
-      background: var(--card);
-      border-radius: 16px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
-      overflow: hidden;
-    }
-
-    .header {
-      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-      color: #fff;
-      padding: 20px;
+      min-height: 100vh;
+      background: linear-gradient(180deg, #4b7cf8 0%, var(--bg-blue) 45%, var(--bg-blue-dark) 100%);
       display: flex;
+      flex-direction: column;
       justify-content: space-between;
-      align-items: center;
     }
 
-    .header h1 { margin: 0; font-size: 1.15rem; font-weight: 700; }
-    .header p { margin: 4px 0 0; font-size: 0.8rem; opacity: 0.85; }
+    .content {
+      padding: 16px 16px 84px;
+    }
 
-    .btn-config {
-      background: rgba(255,255,255,0.18);
+    .top-card {
+      background: var(--card-blue);
+      border-radius: 18px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    .top-card small { display: block; opacity: 0.85; font-size: 0.78rem; }
+    .top-card strong { font-size: 1rem; }
+
+    .icon-btn {
+      background: rgba(255,255,255,0.16);
       border: none;
-      color: #fff;
-      padding: 8px 12px;
-      border-radius: 8px;
-      font-size: 0.8rem;
+      color: var(--white);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 0.85rem;
       cursor: pointer;
     }
 
-    .form-body { padding: 20px; }
+    .wallet-label { font-size: 0.88rem; opacity: 0.9; margin-bottom: 4px; }
+    .wallet-value { font-size: 2rem; font-weight: 800; margin: 0 0 16px; letter-spacing: -0.5px; }
 
-    .tipo-switch {
+    .summary-box {
+      background: var(--soft-panel);
+      color: var(--text-dark);
+      border-radius: 16px;
+      padding: 14px 10px;
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 8px;
+      grid-template-columns: 1fr 1fr;
       margin-bottom: 16px;
     }
 
-    .tipo-btn {
-      padding: 10px 6px;
-      border: 1.5px solid var(--border);
-      background: #fff;
-      border-radius: 10px;
-      font-weight: 600;
-      font-size: 0.82rem;
-      cursor: pointer;
-      color: var(--muted);
-      transition: all 0.2s;
-    }
+    .summary-col { text-align: center; }
+    .summary-col:first-child { border-right: 1px solid rgba(15, 23, 42, 0.14); }
+    .summary-col small { display: block; color: var(--muted); font-size: 0.78rem; margin-bottom: 4px; }
+    .val-in { color: var(--green); font-weight: 800; font-size: 1.05rem; }
+    .val-out { color: var(--red); font-weight: 800; font-size: 1.05rem; }
 
-    .tipo-btn.active[data-tipo="ENTRADA"] {
-      border-color: var(--success);
-      background: #dcfce7;
-      color: #15803d;
-    }
-
-    .tipo-btn.active[data-tipo="SAÍDA"] {
-      border-color: var(--danger);
-      background: #fee2e2;
-      color: #b91c1c;
-    }
-
-    .tipo-btn.active[data-tipo="TRANSFERÊNCIA"] {
-      border-color: #2563eb;
-      background: #dbeafe;
-      color: #1d4ed8;
-    }
-
-    .field { margin-bottom: 14px; }
-    .field label {
-      display: block;
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: var(--muted);
-      margin-bottom: 5px;
-    }
-
-    .field input, .field select {
-      width: 100%;
-      padding: 11px 12px;
-      border: 1.5px solid var(--border);
-      border-radius: 10px;
-      font-size: 0.95rem;
-      color: var(--text);
-      background: #fff;
-      outline: none;
-    }
-
-    .field input:focus, .field select:focus {
-      border-color: var(--primary);
-    }
-
-    .row-2 {
+    .quick-actions {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      gap: 12px;
+      margin-bottom: 18px;
     }
 
-    .btn-submit {
-      width: 100%;
-      padding: 14px;
-      background: var(--primary);
-      color: #fff;
+    .action-btn {
       border: none;
-      border-radius: 12px;
-      font-size: 1rem;
+      border-radius: 14px;
+      padding: 14px 12px;
+      color: var(--white);
       font-weight: 700;
+      font-size: 0.92rem;
       cursor: pointer;
-      margin-top: 6px;
-      transition: background 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
 
-    .btn-submit:hover { background: var(--primary-dark); }
-    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-receita { background: var(--green); }
+    .btn-despesa { background: var(--red); }
 
-    .status-msg {
-      margin-top: 14px;
-      padding: 10px 12px;
-      border-radius: 8px;
-      font-size: 0.85rem;
-      display: none;
-      text-align: center;
-      font-weight: 500;
+    .panel {
+      background: var(--card-blue);
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 14px;
     }
 
-    .status-msg.ok { display: block; background: #dcfce7; color: #166534; }
-    .status-msg.err { display: block; background: #fee2e2; color: #991b1b; }
-
-    .offline-bar {
-      background: #fef3c7;
-      color: #92400e;
-      padding: 10px 16px;
-      font-size: 0.82rem;
-      display: none;
+    .panel h3 {
+      margin: 0 0 12px;
+      font-size: 0.98rem;
+      display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
-    .offline-bar button {
-      background: #d97706;
-      color: #fff;
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .field { margin-bottom: 12px; }
+    .field label { display: block; font-size: 0.78rem; opacity: 0.9; margin-bottom: 4px; }
+    .field input, .field select {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
       border: none;
-      padding: 5px 10px;
-      border-radius: 6px;
-      font-size: 0.78rem;
+      background: var(--white);
+      color: var(--text-dark);
+      font-size: 0.92rem;
+    }
+
+    .btn-save {
+      width: 100%;
+      padding: 13px;
+      border: none;
+      border-radius: 12px;
+      background: #10b981;
+      color: var(--white);
+      font-weight: 800;
+      font-size: 0.95rem;
       cursor: pointer;
     }
 
-    .config-panel {
-      display: none;
-      background: #f8faf9;
-      padding: 16px 20px;
-      border-bottom: 1px solid var(--border);
+    .recent-item {
+      background: rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 11px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
     }
 
-    .config-panel.open { display: block; }
+    .recent-item:last-child { margin-bottom: 0; }
+    .recent-left strong { display: block; font-size: 0.92rem; }
+    .recent-left small { opacity: 0.8; font-size: 0.76rem; }
+    .recent-right { text-align: right; font-weight: 700; font-size: 0.92rem; }
+    .recent-right small { display: block; font-weight: 500; font-size: 0.75rem; opacity: 0.85; }
+
+    .toast {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 0.84rem;
+      text-align: center;
+      display: none;
+      font-weight: 600;
+    }
+
+    .toast.ok { display: block; background: #dcfce7; color: #166534; }
+    .toast.warn { display: block; background: #fef3c7; color: #92400e; }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      max-width: 480px;
+      background: #1d4ed8;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      padding: 8px 12px;
+      gap: 8px;
+    }
+
+    .nav-btn {
+      border: none;
+      border-radius: 12px;
+      padding: 10px;
+      background: transparent;
+      color: rgba(255,255,255,0.78);
+      font-weight: 700;
+      font-size: 0.86rem;
+      cursor: pointer;
+    }
+
+    .nav-btn.active {
+      background: var(--amber);
+      color: var(--text-dark);
+    }
+
+    .hidden { display: none; }
+    .config-box { display: none; background: rgba(15, 23, 42, 0.35); padding: 12px; border-radius: 12px; margin-bottom: 14px; }
+    .config-box.open { display: block; }
   </style>
 </head>
 <body>
-  <div class="app-container">
-    <div class="header">
-      <div>
-        <h1>Controle Financeiro</h1>
-        <p>Lançamento Rápido • Google Sheets</p>
+  <div class="phone-frame">
+    <div class="content">
+      <div class="top-card">
+        <div class="user-info">
+          <div class="avatar">A</div>
+          <div>
+            <small>Bem-vindo,</small>
+            <strong>Alexandre</strong>
+          </div>
+        </div>
+        <div style="display:flex; gap:6px;">
+          <button type="button" class="icon-btn" onclick="atualizarDados(true)">↻</button>
+          <button type="button" class="icon-btn" onclick="toggleConfig()">⚙️</button>
+        </div>
       </div>
-      <button type="button" class="btn-config" onclick="toggleConfig()">⚙️ API</button>
+
+      <div id="configBox" class="config-box">
+        <div class="field">
+          <label>URL do Web App (Apps Script)</label>
+          <input type="url" id="apiUrl" />
+        </div>
+        <div class="field">
+          <label>Token</label>
+          <input type="text" id="apiToken" />
+        </div>
+        <button type="button" class="btn-save" onclick="salvarConfig()">Salvar</button>
+      </div>
+
+      <div id="viewInicio">
+        <div class="wallet-label">Carteira Total</div>
+        <h1 id="saldoTotal" class="wallet-value">R$ 0,00</h1>
+
+        <div class="summary-box">
+          <div class="summary-col">
+            <small>Receita</small>
+            <span id="totalReceita" class="val-in">+ R$ 0,00</span>
+          </div>
+          <div class="summary-col">
+            <small>Despesas</small>
+            <span id="totalDespesa" class="val-out">- R$ 0,00</span>
+          </div>
+        </div>
+
+        <div class="quick-actions">
+          <button type="button" class="action-btn btn-receita" onclick="abrirNovoLancamento('ENTRADA')">
+            ↗ Adicionar Receita
+          </button>
+          <button type="button" class="action-btn btn-despesa" onclick="abrirNovoLancamento('SAÍDA')">
+            ↘ Adicionar Despesa
+          </button>
+        </div>
+
+        <form id="formLancamento" class="panel">
+          <h3 id="tituloForm">Novo Lançamento (Saída)</h3>
+
+          <div class="row-2">
+            <div class="field">
+              <label>Data</label>
+              <input type="date" id="data" required />
+            </div>
+            <div class="field">
+              <label>Valor (R$)</label>
+              <input type="number" id="valor" step="0.01" min="0.01" placeholder="0,00" required />
+            </div>
+          </div>
+
+          <div class="row-2">
+            <div class="field">
+              <label>Categoria</label>
+              <select id="categoria" required></select>
+            </div>
+            <div class="field">
+              <label>Forma de Pagamento</label>
+              <select id="formaPagamento" required>
+                <option value="PIX">PIX</option>
+                <option value="Cartão de Crédito">Cartão de Crédito</option>
+                <option value="Cartão de Débito">Cartão de Débito</option>
+                <option value="Dinheiro">Dinheiro</option>
+                <option value="Transferência (TED/DOC)">Transferência (TED/DOC)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row-2">
+            <div class="field">
+              <label>Instituição</label>
+              <select id="instituicao" required>
+                <option value="Banco Inter">Banco Inter</option>
+                <option value="Banco do Brasil">Banco do Brasil</option>
+                <option value="Mercado Pago">Mercado Pago</option>
+                <option value="Dinheiro em Espécie">Dinheiro em Espécie</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Descrição</label>
+              <input type="text" id="descricao" placeholder="Ex.: Mercado, Salário..." required />
+            </div>
+          </div>
+
+          <button type="submit" id="btnSalvar" class="btn-save">Salvar Rápido</button>
+          <div id="toast" class="toast"></div>
+        </form>
+      </div>
+
+      <div id="viewUltimos5" class="hidden">
+        <div class="panel">
+          <h3>
+            <span>Últimos 5 Lançamentos</span>
+            <button type="button" class="icon-btn" onclick="atualizarDados(true)">Atualizar</button>
+          </h3>
+          <div id="listaUltimos5"></div>
+        </div>
+      </div>
     </div>
 
-    <div id="configPanel" class="config-panel">
-      <div class="field">
-        <label>URL do Web App (Google Apps Script)</label>
-        <input type="url" id="apiUrl" placeholder="https://script.google.com/macros/s/.../exec" />
-      </div>
-      <div class="field">
-        <label>Token de Segurança</label>
-        <input type="text" id="apiToken" value="WORKANA_FIN_2026" />
-      </div>
-      <button type="button" class="btn-submit" style="padding:10px;font-size:0.88rem;" onclick="salvarConfig()">
-        Salvar e Sincronizar Listas
-      </button>
+    <div class="bottom-nav">
+      <button type="button" id="navInicio" class="nav-btn active" onclick="mudarAba('inicio')">🏠 Início</button>
+      <button type="button" id="navUltimos5" class="nav-btn" onclick="mudarAba('ultimos5')">📋 Últimos 5</button>
     </div>
-
-    <div id="offlineBar" class="offline-bar">
-      <span id="offlineText">0 lançamento(s) na fila offline</span>
-      <button type="button" onclick="sincronizarFila()">Sincronizar</button>
-    </div>
-
-    <form id="lancamentoForm" class="form-body">
-      <div class="tipo-switch">
-        <button type="button" class="tipo-btn active" data-tipo="SAÍDA" onclick="selecionarTipo('SAÍDA')">(-) Saída</button>
-        <button type="button" class="tipo-btn" data-tipo="ENTRADA" onclick="selecionarTipo('ENTRADA')">(+) Entrada</button>
-        <button type="button" class="tipo-btn" data-tipo="TRANSFERÊNCIA" onclick="selecionarTipo('TRANSFERÊNCIA')">⇄ Transf.</button>
-      </div>
-
-      <div class="row-2">
-        <div class="field">
-          <label>Data</label>
-          <input type="date" id="data" required />
-        </div>
-        <div class="field">
-          <label>Valor (R$)</label>
-          <input type="number" id="valor" step="0.01" min="0.01" placeholder="0,00" required />
-        </div>
-      </div>
-
-      <div class="field">
-        <label>Instituição / Origem</label>
-        <select id="instituicao" required>
-          <option value="Banco Inter">Banco Inter</option>
-          <option value="Bradesco">Bradesco</option>
-          <option value="Banco do Brasil">Banco do Brasil</option>
-          <option value="Mercado Pago">Mercado Pago</option>
-          <option value="Dinheiro em Espécie">Dinheiro em Espécie</option>
-          <option value="Cartão de Crédito - BB">Cartão de Crédito - BB</option>
-          <option value="Cartão de Crédito - Mercado Pago">Cartão de Crédito - Mercado Pago</option>
-        </select>
-      </div>
-
-      <div class="row-2">
-        <div class="field">
-          <label>Categoria</label>
-          <select id="categoria" required></select>
-        </div>
-        <div class="field">
-          <label>Forma de Pagamento</label>
-          <select id="formaPagamento" required>
-            <option value="PIX">PIX</option>
-            <option value="Cartão de Crédito">Cartão de Crédito</option>
-            <option value="Cartão de Débito">Cartão de Débito</option>
-            <option value="Boleto Bancário">Boleto Bancário</option>
-            <option value="Dinheiro">Dinheiro</option>
-            <option value="Transferência (TED/DOC)">Transferência (TED/DOC)</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="field">
-        <label>Descrição da Transação</label>
-        <input type="text" id="descricao" placeholder="Ex.: Supermercado, Projeto Workana, Gasolina..." required />
-      </div>
-
-      <div class="field">
-        <label>Status</label>
-        <select id="status">
-          <option value="Confirmado">Confirmado</option>
-          <option value="Pendente">Pendente</option>
-        </select>
-      </div>
-
-      <button type="submit" id="btnSubmit" class="btn-submit">Registrar na Planilha</button>
-      <div id="statusMsg" class="status-msg"></div>
-    </form>
   </div>
 
   <script>
     const DEFAULT_API_URL = "https://script.google.com/macros/s/AKfycbwn21c0G8CFaS4jKKHQBcOerg4duIC57LtnbVXZq3_3umV0X8cGg0UrujBUsHfpm1zNwA/exec";
     const DEFAULT_TOKEN = "WORKANA_FIN_2026";
 
-    let tipoAtual = "SAÍDA";
-    let categoriasCache = {
-      ENTRADA: ["Salário", "Freelance / Consultoria", "Dividendos & Investimentos", "Reembolsos & Bonificações", "Outras Receitas"],
-      SAÍDA: ["Moradia & Contas", "Alimentação & Supermercado", "Transporte & Combustível", "Saúde & Bem-estar", "Assinaturas & Serviços", "Lazer & Restaurantes", "Educação & Cursos", "Compras Pessoais"],
-      TRANSFERÊNCIA: ["Transferência entre Contas", "Pagamento de Fatura"]
+    let tipoSelecionado = "SAÍDA";
+    const categoriasPorTipo = {
+      "ENTRADA": ["Salário", "Freelance / Consultoria", "Dividendos & Investimentos", "Outras Receitas"],
+      "SAÍDA": ["Alimentação & Supermercado", "Moradia & Contas", "Transporte & Combustível", "Saúde & Bem-estar", "Lazer & Restaurantes", "Compras Pessoais"]
     };
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -302,168 +367,175 @@
       document.getElementById("apiUrl").value = localStorage.getItem("fin_api_url") || DEFAULT_API_URL;
       document.getElementById("apiToken").value = localStorage.getItem("fin_api_token") || DEFAULT_TOKEN;
 
-      atualizarCategoriasSelect();
-      atualizarBarraOffline();
-
-      if (getApiUrl()) {
-        carregarConfigRemota();
-      } else {
-        document.getElementById("configPanel").classList.add("open");
-      }
+      abrirNovoLancamento("SAÍDA");
+      renderizarCacheNaTela();
+      atualizarDados(false);
     });
 
-    function getApiUrl() {
-      return document.getElementById("apiUrl").value.trim();
-    }
-
-    function getApiToken() {
-      return document.getElementById("apiToken").value.trim();
+    function mudarAba(aba) {
+      const isInicio = aba === "inicio";
+      document.getElementById("viewInicio").classList.toggle("hidden", !isInicio);
+      document.getElementById("viewUltimos5").classList.toggle("hidden", isInicio);
+      document.getElementById("navInicio").classList.toggle("active", isInicio);
+      document.getElementById("navUltimos5").classList.toggle("active", !isInicio);
+      if (!isInicio) renderizarUltimos5();
     }
 
     function toggleConfig() {
-      document.getElementById("configPanel").classList.toggle("open");
+      document.getElementById("configBox").classList.toggle("open");
     }
 
     function salvarConfig() {
-      localStorage.setItem("fin_api_url", getApiUrl());
-      localStorage.setItem("fin_api_token", getApiToken());
-      mostrarMensagem("Configurações salvas! Sincronizando...", "ok");
-      carregarConfigRemota();
+      localStorage.setItem("fin_api_url", document.getElementById("apiUrl").value.trim());
+      localStorage.setItem("fin_api_token", document.getElementById("apiToken").value.trim());
+      mostrarToast("Configuração salva!", "ok");
+      atualizarDados(true);
     }
 
-    function selecionarTipo(tipo) {
-      tipoAtual = tipo;
-      document.querySelectorAll(".tipo-btn").forEach(btn => {
-        btn.classList.toggle("active", btn.dataset.tipo === tipo);
-      });
-      atualizarCategoriasSelect();
+    function abrirNovoLancamento(tipo) {
+      tipoSelecionado = tipo;
+      document.getElementById("tituloForm").textContent =
+        tipo === "ENTRADA" ? "Nova Receita (+)" : "Nova Despesa (-)";
+      const selCat = document.getElementById("categoria");
+      selCat.innerHTML = (categoriasPorTipo[tipo] || [])
+        .map(c => `<option value="${c}">${c}</option>`).join("");
+      mudarAba("inicio");
+      document.getElementById("valor").focus();
     }
 
-    function atualizarCategoriasSelect() {
-      const select = document.getElementById("categoria");
-      const lista = categoriasCache[tipoAtual] || [];
-      select.innerHTML = lista.map(item => `<option value="${item}">${item}</option>`).join("");
+    function formatarMoeda(v) {
+      return Number(v || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
     }
 
-    async function carregarConfigRemota() {
-      const url = getApiUrl();
-      if (!url) return;
-      try {
-        const res = await fetch(`${url}?token=${encodeURIComponent(getApiToken())}`);
-        const json = await res.json();
-        if (json.status === "success" && json.config) {
-          if (json.config.bancos.length) {
-            document.getElementById("instituicao").innerHTML =
-              json.config.bancos.map(b => `<option value="${b}">${b}</option>`).join("");
-          }
-          if (json.config.categoriasReceita.length) categoriasCache.ENTRADA = json.config.categoriasReceita;
-          if (json.config.categoriasDespesa.length) categoriasCache.SAÍDA = json.config.categoriasDespesa;
-          if (json.config.formasPagamento.length) {
-            document.getElementById("formaPagamento").innerHTML =
-              json.config.formasPagamento.map(f => `<option value="${f}">${f}</option>`).join("");
-          }
-          atualizarCategoriasSelect();
-        }
-      } catch (e) {
-        console.warn("Usando listas locais padrão.", e);
-      }
+    function renderizarCacheNaTela() {
+      const resumo = JSON.parse(localStorage.getItem("fin_resumo_cache") || '{"saldo":0,"receita":0,"despesa":0}');
+      document.getElementById("saldoTotal").textContent = formatarMoeda(resumo.saldo);
+      document.getElementById("totalReceita").textContent = `+ ${formatarMoeda(resumo.receita)}`;
+      document.getElementById("totalDespesa").textContent = `- ${formatarMoeda(resumo.despesa)}`;
+      renderizarUltimos5();
     }
 
-    document.getElementById("lancamentoForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const url = getApiUrl();
-      if (!url) {
-        mostrarMensagem("Configure a URL do Google Apps Script em ⚙️ API primeiro.", "err");
-        document.getElementById("configPanel").classList.add("open");
+    function obterListaCombinadaUltimos5() {
+      const locais = JSON.parse(localStorage.getItem("fin_recentes_locais") || "[]");
+      const remotos = JSON.parse(localStorage.getItem("fin_recentes_remotos") || "[]");
+      return [...locais, ...remotos].slice(0, 5);
+    }
+
+    function renderizarUltimos5() {
+      const lista = obterListaCombinadaUltimos5();
+      const container = document.getElementById("listaUltimos5");
+      if (!lista.length) {
+        container.innerHTML = `<p style="opacity:0.8;font-size:0.86rem;margin:0;">Nenhum lançamento recente encontrado.</p>`;
         return;
       }
+      container.innerHTML = lista.map(item => {
+        const isEntrada = item.tipo === "ENTRADA";
+        const sinal = isEntrada ? "+" : "-";
+        const cor = isEntrada ? "#86efac" : "#fca5a5";
+        return `
+          <div class="recent-item">
+            <div class="recent-left">
+              <strong>${item.descricao || item.categoria}</strong>
+              <small>${item.data} • ${item.formaPagamento || item.instituicao || ""}</small>
+            </div>
+            <div class="recent-right" style="color:${cor};">
+              ${sinal} ${formatarMoeda(item.valor)}
+              <small>${item.categoria || ""}</small>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    async function atualizarDados(mostrarFeedback) {
+      const url = (document.getElementById("apiUrl").value || DEFAULT_API_URL).trim();
+      const token = (document.getElementById("apiToken").value || DEFAULT_TOKEN).trim();
+      if (!url) return;
+
+      try {
+        const res = await fetch(`${url}?token=${encodeURIComponent(token)}`, { cache: "no-store" });
+        const json = await res.json();
+        if (json.status === "success") {
+          if (Array.isArray(json.ultimos5)) {
+            localStorage.setItem("fin_recentes_remotos", JSON.stringify(json.ultimos5.slice(0, 5)));
+            localStorage.removeItem("fin_recentes_locais");
+          }
+          if (json.resumo) {
+            localStorage.setItem("fin_resumo_cache", JSON.stringify(json.resumo));
+          }
+          renderizarCacheNaTela();
+          if (mostrarFeedback) mostrarToast("Sincronizado com a planilha!", "ok");
+        }
+      } catch (e) {
+        if (mostrarFeedback) mostrarToast("Sem conexão agora; exibindo dados locais.", "warn");
+      }
+    }
+
+    document.getElementById("formLancamento").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const url = (document.getElementById("apiUrl").value || DEFAULT_API_URL).trim();
+      const token = (document.getElementById("apiToken").value || DEFAULT_TOKEN).trim();
+
+      const valorNum = parseFloat(document.getElementById("valor").value);
+      const dataIso = document.getElementById("data").value;
+      const [ano, mes, dia] = dataIso.split("-");
+      const dataBr = `${dia}/${mes}/${ano}`;
 
       const registro = {
-        token: getApiToken(),
-        data: document.getElementById("data").value,
-        tipo: tipoAtual,
+        token,
+        data: dataIso,
+        dataFormatada: dataBr,
+        tipo: tipoSelecionado,
         categoria: document.getElementById("categoria").value,
         descricao: document.getElementById("descricao").value.trim(),
         instituicao: document.getElementById("instituicao").value,
         formaPagamento: document.getElementById("formaPagamento").value,
-        valor: parseFloat(document.getElementById("valor").value),
-        status: document.getElementById("status").value
+        valor: valorNum,
+        status: "Confirmado"
       };
 
-      const btn = document.getElementById("btnSubmit");
-      btn.disabled = true;
-      btn.textContent = "Enviando...";
+      // Atualiza tela na hora sem esperar resposta lenta
+      const locais = JSON.parse(localStorage.getItem("fin_recentes_locais") || "[]");
+      locais.unshift({
+        data: dataBr,
+        tipo: registro.tipo,
+        categoria: registro.categoria,
+        descricao: registro.descricao,
+        instituicao: registro.instituicao,
+        formaPagamento: registro.formaPagamento,
+        valor: registro.valor
+      });
+      localStorage.setItem("fin_recentes_locais", JSON.stringify(locais.slice(0, 5)));
 
-      try {
-        await enviarParaPlanilha(url, registro);
-        mostrarMensagem("Lançamento registrado na planilha com sucesso!", "ok");
-        document.getElementById("valor").value = "";
-        document.getElementById("descricao").value = "";
-      } catch (err) {
-        salvarNaFilaOffline(registro);
-        mostrarMensagem("Sem conexão no momento. Salvo na fila offline!", "err");
-      } finally {
-        btn.disabled = false;
-        btn.textContent = "Registrar na Planilha";
+      const resumo = JSON.parse(localStorage.getItem("fin_resumo_cache") || '{"saldo":0,"receita":0,"despesa":0}');
+      if (registro.tipo === "ENTRADA") {
+        resumo.receita = Number(resumo.receita || 0) + valorNum;
+        resumo.saldo = Number(resumo.saldo || 0) + valorNum;
+      } else if (registro.tipo === "SAÍDA") {
+        resumo.despesa = Number(resumo.despesa || 0) + valorNum;
+        resumo.saldo = Number(resumo.saldo || 0) - valorNum;
       }
+      localStorage.setItem("fin_resumo_cache", JSON.stringify(resumo));
+      renderizarCacheNaTela();
+
+      document.getElementById("valor").value = "";
+      document.getElementById("descricao").value = "";
+      mostrarToast("Salvo na hora! Enviando à planilha...", "ok");
+
+      // Envio em segundo plano sem bloquear o botão
+      fetch(url, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(registro)
+      }).catch(() => {});
     });
 
-    async function enviarParaPlanilha(url, payload) {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify(payload)
-      });
-      const result = await response.json();
-      if (result.status !== "success") {
-        throw new Error(result.message || "Erro ao gravar na planilha");
-      }
-      return result;
-    }
-
-    function salvarNaFilaOffline(item) {
-      const fila = JSON.parse(localStorage.getItem("fin_fila_offline") || "[]");
-      fila.push(item);
-      localStorage.setItem("fin_fila_offline", JSON.stringify(fila));
-      atualizarBarraOffline();
-    }
-
-    function atualizarBarraOffline() {
-      const fila = JSON.parse(localStorage.getItem("fin_fila_offline") || "[]");
-      const bar = document.getElementById("offlineBar");
-      if (fila.length > 0) {
-        bar.style.display = "flex";
-        document.getElementById("offlineText").textContent = `${fila.length} lançamento(s) aguardando sincronização`;
-      } else {
-        bar.style.display = "none";
-      }
-    }
-
-    async function sincronizarFila() {
-      const url = getApiUrl();
-      let fila = JSON.parse(localStorage.getItem("fin_fila_offline") || "[]");
-      if (!url || fila.length === 0) return;
-
-      const restantes = [];
-      for (const item of fila) {
-        try {
-          await enviarParaPlanilha(url, item);
-        } catch (e) {
-          restantes.push(item);
-        }
-      }
-      localStorage.setItem("fin_fila_offline", JSON.stringify(restantes));
-      atualizarBarraOffline();
-      if (restantes.length === 0) {
-        mostrarMensagem("Todos os lançamentos offline foram sincronizados!", "ok");
-      }
-    }
-
-    function mostrarMensagem(texto, tipo) {
-      const el = document.getElementById("statusMsg");
-      el.textContent = texto;
-      el.className = `status-msg ${tipo}`;
-      setTimeout(() => { el.style.display = "none"; }, 4500);
+    function mostrarToast(msg, tipo) {
+      const el = document.getElementById("toast");
+      el.textContent = msg;
+      el.className = `toast ${tipo}`;
+      setTimeout(() => { el.style.display = "none"; }, 3000);
     }
 
     if ("serviceWorker" in navigator) {
