@@ -104,17 +104,24 @@
     .val-in { color: var(--green); font-weight: 800; font-size: 1.05rem; }
     .val-out { color: var(--red); font-weight: 800; font-size: 1.05rem; }
 
+    .choice-title {
+      font-size: 0.88rem;
+      opacity: 0.92;
+      margin: 4px 0 10px;
+      font-weight: 600;
+    }
+
     .quick-actions {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
     }
 
     .action-btn {
       border: none;
       border-radius: 14px;
-      padding: 14px 12px;
+      padding: 15px 12px;
       color: var(--white);
       font-weight: 700;
       font-size: 0.92rem;
@@ -143,17 +150,28 @@
       align-items: center;
     }
 
+    .btn-fechar {
+      background: rgba(255,255,255,0.16);
+      border: none;
+      color: var(--white);
+      border-radius: 8px;
+      padding: 4px 9px;
+      font-size: 0.78rem;
+      cursor: pointer;
+    }
+
     .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .row-3 { display: grid; grid-template-columns: 1.2fr 0.9fr 1fr; gap: 8px; }
     .field { margin-bottom: 12px; }
     .field label { display: block; font-size: 0.78rem; opacity: 0.9; margin-bottom: 4px; }
     .field input, .field select {
       width: 100%;
-      padding: 10px 12px;
+      padding: 10px 10px;
       border-radius: 10px;
       border: none;
       background: var(--white);
       color: var(--text-dark);
-      font-size: 0.92rem;
+      font-size: 0.9rem;
     }
 
     .btn-save {
@@ -285,22 +303,32 @@
           </div>
         </div>
 
+        <div class="choice-title">O que você deseja registrar?</div>
         <div class="quick-actions">
-          <button type="button" class="action-btn btn-receita" onclick="abrirNovoLancamento('ENTRADA')">
+          <button type="button" class="action-btn btn-receita" onclick="abrirFormularioTipo('ENTRADA')">
             ↗ Adicionar Receita
           </button>
-          <button type="button" class="action-btn btn-despesa" onclick="abrirNovoLancamento('SAÍDA')">
+          <button type="button" class="action-btn btn-despesa" onclick="abrirFormularioTipo('SAÍDA')">
             ↘ Adicionar Despesa
           </button>
         </div>
 
-        <form id="formLancamento" class="panel">
-          <h3 id="tituloForm">Novo Lançamento (Saída)</h3>
+        <div id="toast" class="toast"></div>
 
-          <div class="row-2">
+        <form id="formLancamento" class="panel hidden">
+          <h3>
+            <span id="tituloForm">Novo Lançamento</span>
+            <button type="button" class="btn-fechar" onclick="fecharFormulario()">✕ Fechar</button>
+          </h3>
+
+          <div class="row-3">
             <div class="field">
               <label>Data</label>
               <input type="date" id="data" required />
+            </div>
+            <div class="field">
+              <label>Hora</label>
+              <input type="time" id="hora" required />
             </div>
             <div class="field">
               <label>Valor (R$)</label>
@@ -342,7 +370,6 @@
           </div>
 
           <button type="submit" id="btnSalvar" class="btn-save">Salvar Rápido</button>
-          <div id="toast" class="toast"></div>
         </form>
       </div>
 
@@ -367,15 +394,27 @@
     const DEFAULT_API_URL = "https://script.google.com/macros/s/AKfycbxcgEl9JXm7aYPqtXCLpUTa-qsPXNaPc_YJEUHU1Zu9Wv1hePhHGBH1gL7K0vsGJJl9NA/exec";
     const DEFAULT_TOKEN = "WORKANA_FIN_2026";
 
-    let tipoSelecionado = "SAÍDA";
+    let tipoSelecionado = null;
     const categoriasPorTipo = {
       "ENTRADA": ["Salário", "Freelance / Consultoria", "Dividendos & Investimentos", "Outras Receitas"],
       "SAÍDA": ["Alimentação & Supermercado", "Moradia & Contas", "Transporte & Combustível", "Saúde & Bem-estar", "Lazer & Restaurantes", "Compras Pessoais"]
     };
 
+    function preencherDataEHoraAtuais() {
+      const agora = new Date();
+      const ano = agora.getFullYear();
+      const mes = String(agora.getMonth() + 1).padStart(2, "0");
+      const dia = String(agora.getDate()).padStart(2, "0");
+      const hh = String(agora.getHours()).padStart(2, "0");
+      const mm = String(agora.getMinutes()).padStart(2, "0");
+
+      document.getElementById("data").value = `${ano}-${mes}-${dia}`;
+      document.getElementById("hora").value = `${hh}:${mm}`;
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
-      document.getElementById("data").valueAsDate = new Date();
-      // Garante a URL mais recente se ainda estiver na URL antiga
+      preencherDataEHoraAtuais();
+
       const urlSalva = localStorage.getItem("fin_api_url");
       const urlFinal = (!urlSalva || urlSalva.includes("AKfycbwn21c0G8CFaS4jKKHQBcOerg4duIC57LtnbVXZq3_3umV0X8cGg0UrujBUsHfpm1zNwA"))
         ? DEFAULT_API_URL
@@ -385,7 +424,6 @@
       document.getElementById("apiUrl").value = urlFinal;
       document.getElementById("apiToken").value = localStorage.getItem("fin_api_token") || DEFAULT_TOKEN;
 
-      abrirNovoLancamento("SAÍDA");
       renderizarCacheNaTela();
       sincronizarTudo(false);
     });
@@ -407,7 +445,25 @@
       document.getElementById("viewUltimos5").classList.toggle("hidden", isInicio);
       document.getElementById("navInicio").classList.toggle("active", isInicio);
       document.getElementById("navUltimos5").classList.toggle("active", !isInicio);
+      if (isInicio) fecharFormulario();
       if (!isInicio) renderizarUltimos5();
+    }
+
+    function abrirFormularioTipo(tipo) {
+      tipoSelecionado = tipo;
+      preencherDataEHoraAtuais();
+      document.getElementById("tituloForm").textContent =
+        tipo === "ENTRADA" ? "Nova Receita (+)" : "Nova Despesa (-)";
+      const selCat = document.getElementById("categoria");
+      selCat.innerHTML = (categoriasPorTipo[tipo] || [])
+        .map(c => `<option value="${c}">${c}</option>`).join("");
+      document.getElementById("formLancamento").classList.remove("hidden");
+      document.getElementById("valor").focus();
+    }
+
+    function fecharFormulario() {
+      tipoSelecionado = null;
+      document.getElementById("formLancamento").classList.add("hidden");
     }
 
     function toggleConfig() {
@@ -422,31 +478,23 @@
       sincronizarTudo(true);
     }
 
-    function abrirNovoLancamento(tipo) {
-      tipoSelecionado = tipo;
-      document.getElementById("tituloForm").textContent =
-        tipo === "ENTRADA" ? "Nova Receita (+)" : "Nova Despesa (-)";
-      const selCat = document.getElementById("categoria");
-      selCat.innerHTML = (categoriasPorTipo[tipo] || [])
-        .map(c => `<option value="${c}">${c}</option>`).join("");
-      mudarAba("inicio");
-      document.getElementById("valor").focus();
-    }
-
     function formatarMoeda(v) {
       return Number(v || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
     }
 
     function chaveOrdenacao(item) {
-      // Suporta YYYY-MM-DD ou DD/MM/YYYY + timestamp local
-      let base = 0;
+      let dataParte = "1970-01-01";
+      let horaParte = item.hora && /^\d{2}:\d{2}$/.test(item.hora) ? `${item.hora}:00` : "00:00:00";
+
       if (item.dataIso && /^\d{4}-\d{2}-\d{2}$/.test(item.dataIso)) {
-        base = new Date(item.dataIso + "T12:00:00").getTime() || 0;
+        dataParte = item.dataIso;
       } else if (item.data && /^\d{2}\/\d{2}\/\d{4}$/.test(item.data)) {
         const [d, m, a] = item.data.split("/");
-        base = new Date(`${a}-${m}-${d}T12:00:00`).getTime() || 0;
+        dataParte = `${a}-${m}-${d}`;
       }
-      return base + Number(item.criadoEm || 0);
+
+      const ts = new Date(`${dataParte}T${horaParte}`).getTime() || 0;
+      return ts + (Number(item.criadoEm || 0) % 60000);
     }
 
     function renderizarCacheNaTela() {
@@ -466,10 +514,9 @@
         ...remotos.map(item => ({ ...item, pendente: false }))
       ];
 
-      // Remove possíveis duplicatas exatas por chave de lançamento
       const mapaUnico = new Map();
       for (const item of combinados) {
-        const chave = item.localId || item.id || `${item.data}|${item.descricao}|${item.valor}`;
+        const chave = item.localId || item.id || `${item.data}|${item.hora || ""}|${item.descricao}|${item.valor}`;
         if (!mapaUnico.has(chave)) {
           mapaUnico.set(chave, item);
         }
@@ -492,11 +539,12 @@
         const sinal = isEntrada ? "+" : "-";
         const cor = isEntrada ? "#86efac" : "#fca5a5";
         const badge = item.pendente ? `<span class="badge-pendente">Na fila</span>` : "";
+        const horarioTexto = item.hora ? ` às ${item.hora}` : "";
         return `
           <div class="recent-item">
             <div class="recent-left">
               <strong>${item.descricao || item.categoria}${badge}</strong>
-              <small>${item.data} • ${item.formaPagamento || item.instituicao || ""}</small>
+              <small>${item.data}${horarioTexto} • ${item.formaPagamento || item.instituicao || ""}</small>
             </div>
             <div class="recent-right" style="color:${cor};">
               ${sinal} ${formatarMoeda(item.valor)}
@@ -511,7 +559,6 @@
       const controller = new AbortController();
       const timer = setTimeout(() => controller.abort(), 8000);
       try {
-        // Envia via POST e verifica resposta quando possível
         const res = await fetch(url, {
           method: "POST",
           headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -527,7 +574,6 @@
         return true;
       } catch (err) {
         clearTimeout(timer);
-        // Em WebView/Apps Script redirecionado, tenta no-cors como fallback de envio
         try {
           await fetch(url, {
             method: "POST",
@@ -619,13 +665,16 @@
 
     document.getElementById("formLancamento").addEventListener("submit", async (e) => {
       e.preventDefault();
-      const cfg = getConfigAtiva();
+      if (!tipoSelecionado) return;
 
+      const cfg = getConfigAtiva();
       const valorNum = parseFloat(document.getElementById("valor").value);
       const dataIso = document.getElementById("data").value;
+      const horaStr = document.getElementById("hora").value || "00:00";
       const [ano, mes, dia] = dataIso.split("-");
       const dataBr = `${dia}/${mes}/${ano}`;
       const agoraMs = Date.now();
+      const descricaoBase = document.getElementById("descricao").value.trim();
 
       const registro = {
         localId: `LOCAL-${agoraMs}-${Math.random().toString(36).slice(2, 6)}`,
@@ -633,17 +682,17 @@
         token: cfg.token,
         data: dataIso,
         dataIso: dataIso,
+        hora: horaStr,
         dataFormatada: dataBr,
         tipo: tipoSelecionado,
         categoria: document.getElementById("categoria").value,
-        descricao: document.getElementById("descricao").value.trim(),
+        descricao: `${descricaoBase} [${horaStr}]`,
         instituicao: document.getElementById("instituicao").value,
         formaPagamento: document.getElementById("formaPagamento").value,
         valor: valorNum,
         status: "Confirmado"
       };
 
-      // 1. Atualiza resumo na hora e coloca na fila pendente até confirmar envio
       const resumo = JSON.parse(localStorage.getItem("fin_resumo_cache") || '{"saldo":0,"receita":0,"despesa":0}');
       if (registro.tipo === "ENTRADA") {
         resumo.receita = Number(resumo.receita || 0) + valorNum;
@@ -661,9 +710,9 @@
       renderizarCacheNaTela();
       document.getElementById("valor").value = "";
       document.getElementById("descricao").value = "";
-      mostrarToast("Registrado na hora! Enviando à planilha...", "ok");
+      fecharFormulario();
+      mostrarToast(`Registrado às ${horaStr}! Enviando à planilha...`, "ok");
 
-      // 2. Tenta enviar e sincronizar em segundo plano
       const enviado = await enviarRegistroServidor(cfg.url, registro);
       if (enviado) {
         const filaAtual = JSON.parse(localStorage.getItem("fin_fila_pendente") || "[]")
