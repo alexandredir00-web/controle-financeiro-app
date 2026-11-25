@@ -1,0 +1,19 @@
+{
+  "name": "Finanças 360º",
+  "short_name": "Finanças 360",
+  "description": "Lançamentos financeiros integrados ao Google Sheets",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f3f6f4",
+  "theme_color": "#206a4e",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2489/2489756.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
