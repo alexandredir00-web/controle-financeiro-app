@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Finanças 360º • Lançamentos</title>
+  <style>
+    :root {
+      --primary: #206a4e;
+      --primary-dark: #164b37;
+      --bg: #f3f6f4;
+      --card: #ffffff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: #dce4df;
+      --danger: #dc2626;
+      --success: #16a34a;
+    }
+
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 480px;
+      background: var(--card);
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #fff;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header h1 { margin: 0; font-size: 1.15rem; font-weight: 700; }
+    .header p { margin: 4px 0 0; font-size: 0.8rem; opacity: 0.85; }
+
+    .btn-config {
+      background: rgba(255,255,255,0.18);
+      border: none;
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+
+    .form-body { padding: 20px; }
+
+    .tipo-switch {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .tipo-btn {
+      padding: 10px 6px;
+      border: 1.5px solid var(--border);
+      background: #fff;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.82rem;
+      cursor: pointer;
+      color: var(--muted);
+      transition: all 0.2s;
+    }
+
+    .tipo-btn.active[data-tipo="ENTRADA"] {
+      border-color: var(--success);
+      background: #dcfce7;
+      color: #15803d;
+    }
+
+    .tipo-btn.active[data-tipo="SAÍDA"] {
+      border-color: var(--danger);
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .tipo-btn.active[data-tipo="TRANSFERÊNCIA"] {
+      border-color: #2563eb;
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .field { margin-bottom: 14px; }
+    .field label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+
+    .field input, .field select {
+      width: 100%;
+      padding: 11px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 0.95rem;
+      color: var(--text);
+      background: #fff;
+      outline: none;
+    }
+
+    .field input:focus, .field select:focus {
+      border-color: var(--primary);
+    }
+
+    .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: background 0.2s;
+    }
+
+    .btn-submit:hover { background: var(--primary-dark); }
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .status-msg {
+      margin-top: 14px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      display: none;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    .status-msg.ok { display: block; background: #dcfce7; color: #166534; }
+    .status-msg.err { display: block; background: #fee2e2; color: #991b1b; }
+
+    .offline-bar {
+      background: #fef3c7;
+      color: #92400e;
+      padding: 10px 16px;
+      font-size: 0.82rem;
+      display: none;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .offline-bar button {
+      background: #d97706;
+      color: #fff;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      cursor: pointer;
+    }
+
+    .config-panel {
+      display: none;
+      background: #f8faf9;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .config-panel.open { display: block; }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <div class="header">
+      <div>
+        <h1>Controle Financeiro</h1>
+        <p>Lançamento Rápido • Google Sheets</p>
+      </div>
+      <button type="button" class="btn-config" onclick="toggleConfig()">⚙️ API</button>
+    </div>
+
+    <div id="configPanel" class="config-panel">
+      <div class="field">
+        <label>URL do Web App (Google Apps Script)</label>
+        <input type="url" id="apiUrl" placeholder="https://script.google.com/macros/s/.../exec" />
+      </div>
+      <div class="field">
+        <label>Token de Segurança</label>
+        <input type="text" id="apiToken" value="WORKANA_FIN_2026" />
+      </div>
+      <button type="button" class="btn-submit" style="padding:10px;font-size:0.88rem;" onclick="salvarConfig()">
+        Salvar e Sincronizar Listas
+      </button>
+    </div>
+
+    <div id="offlineBar" class="offline-bar">
+      <span id="offlineText">0 lançamento(s) na fila offline</span>
+      <button type="button" onclick="sincronizarFila()">Sincronizar</button>
+    </div>
+
+    <form id="lancamentoForm" class="form-body">
+      <div class="tipo-switch">
+        <button type="button" class="tipo-btn active" data-tipo="SAÍDA" onclick="selecionarTipo('SAÍDA')">(-) Saída</button>
+        <button type="button" class="tipo-btn" data-tipo="ENTRADA" onclick="selecionarTipo('ENTRADA')">(+) Entrada</button>
+        <button type="button" class="tipo-btn" data-tipo="TRANSFERÊNCIA" onclick="selecionarTipo('TRANSFERÊNCIA')">⇄ Transf.</button>
+      </div>
+
+      <div class="row-2">
+        <div class="field">
+          <label>Data</label>
+          <input type="date" id="data" required />
+        </div>
+        <div class="field">
+          <label>Valor (R$)</label>
+          <input type="number" id="valor" step="0.01" min="0.01" placeholder="0,00" required />
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Instituição / Origem</label>
+        <select id="instituicao" required>
+          <option value="Banco Inter">Banco Inter</option>
+          <option value="Bradesco">Bradesco</option>
+          <option value="Banco do Brasil">Banco do Brasil</option>
+          <option value="Mercado Pago">Mercado Pago</option>
+          <option value="Dinheiro em Espécie">Dinheiro em Espécie</option>
+          <option value="Cartão de Crédito - BB">Cartão de Crédito - BB</option>
+          <option value="Cartão de Crédito - Mercado Pago">Cartão de Crédito - Mercado Pago</option>
+        </select>
+      </div>
+
+      <div class="row-2">
+        <div class="field">
+          <label>Categoria</label>
+          <select id="categoria" required></select>
+        </div>
+        <div class="field">
+          <label>Forma de Pagamento</label>
+          <select id="formaPagamento" required>
+            <option value="PIX">PIX</option>
+            <option value="Cartão de Crédito">Cartão de Crédito</option>
+            <option value="Cartão de Débito">Cartão de Débito</option>
+            <option value="Boleto Bancário">Boleto Bancário</option>
+            <option value="Dinheiro">Dinheiro</option>
+            <option value="Transferência (TED/DOC)">Transferência (TED/DOC)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Descrição da Transação</label>
+        <input type="text" id="descricao" placeholder="Ex.: Supermercado, Projeto Workana, Gasolina..." required />
+      </div>
+
+      <div class="field">
+        <label>Status</label>
+        <select id="status">
+          <option value="Confirmado">Confirmado</option>
+          <option value="Pendente">Pendente</option>
+        </select>
+      </div>
+
+      <button type="submit" id="btnSubmit" class="btn-submit">Registrar na Planilha</button>
+      <div id="statusMsg" class="status-msg"></div>
+    </form>
+  </div>
+
+  <script>
+    // Cole aqui a URL gerada no Google Apps Script caso queira deixar fixa no código
+    const DEFAULT_API_URL = "";
+    const DEFAULT_TOKEN = "WORKANA_FIN_2026";
+
+    let tipoAtual = "SAÍDA";
+    let categoriasCache = {
+      ENTRADA: ["Salário", "Freelance / Consultoria", "Dividendos & Investimentos", "Reembolsos & Bonificações", "Outras Receitas"],
+      SAÍDA: ["Moradia & Contas", "Alimentação & Supermercado", "Transporte & Combustível", "Saúde & Bem-estar", "Assinaturas & Serviços", "Lazer & Restaurantes", "Educação & Cursos", "Compras Pessoais"],
+      TRANSFERÊNCIA: ["Transferência entre Contas", "Pagamento de Fatura"]
+    };
+
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("data").valueAsDate = new Date();
+      document.getElementById("apiUrl").value = localStorage.getItem("fin_api_url") || DEFAULT_API_URL;
+      document.getElementById("apiToken").value = localStorage.getItem("fin_api_token") || DEFAULT_TOKEN;
+
+      atualizarCategoriasSelect();
+      atualizarBarraOffline();
+
+      if (getApiUrl()) {
+        carregarConfigRemota();
+      } else {
+        document.getElementById("configPanel").classList.add("open");
+      }
+    });
+
+    function getApiUrl() {
+      return document.getElementById("apiUrl").value.trim();
+    }
+
+    function getApiToken() {
+      return document.getElementById("apiToken").value.trim();
+    }
+
+    function toggleConfig() {
+      document.getElementById("configPanel").classList.toggle("open");
+    }
+
+    function salvarConfig() {
+      localStorage.setItem("fin_api_url", getApiUrl());
+      localStorage.setItem("fin_api_token", getApiToken());
+      mostrarMensagem("Configurações salvas! Sincronizando...", "ok");
+      carregarConfigRemota();
+    }
+
+    function selecionarTipo(tipo) {
+      tipoAtual = tipo;
+      document.querySelectorAll(".tipo-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.tipo === tipo);
+      });
+      atualizarCategoriasSelect();
+    }
+
+    function atualizarCategoriasSelect() {
+      const select = document.getElementById("categoria");
+      const lista = categoriasCache[tipoAtual] || [];
+      select.innerHTML = lista.map(item => `<option value="${item}">${item}</option>`).join("");
+    }
+
+    async function carregarConfigRemota() {
+      const url = getApiUrl();
+      if (!url) return;
+      try {
+        const res = await fetch(`${url}?token=${encodeURIComponent(getApiToken())}`);
+        const json = await res.json();
+        if (json.status === "success" && json.config) {
+          if (json.config.bancos.length) {
+            document.getElementById("instituicao").innerHTML =
+              json.config.bancos.map(b => `<option value="${b}">${b}</option>`).join("");
+          }
+          if (json.config.categoriasReceita.length) categoriasCache.ENTRADA = json.config.categoriasReceita;
+          if (json.config.categoriasDespesa.length) categoriasCache.SAÍDA = json.config.categoriasDespesa;
+          if (json.config.formasPagamento.length) {
+            document.getElementById("formaPagamento").innerHTML =
+              json.config.formasPagamento.map(f => `<option value="${f}">${f}</option>`).join("");
+          }
+          atualizarCategoriasSelect();
+        }
+      } catch (e) {
+        console.warn("Usando listas locais padrão.", e);
+      }
+    }
+
+    document.getElementById("lancamentoForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const url = getApiUrl();
+      if (!url) {
+        mostrarMensagem("Configure a URL do Google Apps Script em ⚙️ API primeiro.", "err");
+        document.getElementById("configPanel").classList.add("open");
+        return;
+      }
+
+      const registro = {
+        token: getApiToken(),
+        data: document.getElementById("data").value,
+        tipo: tipoAtual,
+        categoria: document.getElementById("categoria").value,
+        descricao: document.getElementById("descricao").value.trim(),
+        instituicao: document.getElementById("instituicao").value,
+        formaPagamento: document.getElementById("formaPagamento").value,
+        valor: parseFloat(document.getElementById("valor").value),
+        status: document.getElementById("status").value
+      };
+
+      const btn = document.getElementById("btnSubmit");
+      btn.disabled = true;
+      btn.textContent = "Enviando...";
+
+      try {
+        await enviarParaPlanilha(url, registro);
+        mostrarMensagem("Lançamento registrado na planilha com sucesso!", "ok");
+        document.getElementById("valor").value = "";
+        document.getElementById("descricao").value = "";
+      } catch (err) {
+        salvarNaFilaOffline(registro);
+        mostrarMensagem("Sem conexão no momento. Salvo na fila offline!", "err");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Registrar na Planilha";
+      }
+    });
+
+    async function enviarParaPlanilha(url, payload) {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload)
+      });
+      const result = await response.json();
+      if (result.status !== "success") {
+        throw new Error(result.message || "Erro ao gravar na planilha");
+      }
+      return result;
+    }
+
+    function salvarNaFilaOffline(item) {
+      const fila = JSON.parse(localStorage.getItem("fin_fila_offline") || "[]");
+      fila.push(item);
+      localStorage.setItem("fin_fila_offline", JSON.stringify(fila));
+      atualizarBarraOffline();
+    }
+
+    function atualizarBarraOffline() {
+      const fila = JSON.parse(localStorage.getItem("fin_fila_offline") || "[]");
+      const bar = document.getElementById("offlineBar");
+      if (fila.length > 0) {
+        bar.style.display = "flex";
+        document.getElementById("offlineText").textContent = `${fila.length} lançamento(s) aguardando sincronização`;
+      } else {
+        bar.style.display = "none";
+      }
+    }
+
+    async function sincronizarFila() {
+      const url = getApiUrl();
+      let fila = JSON.parse(localStorage.getItem("fin_fila_offline") || "[]");
+      if (!url || fila.length === 0) return;
+
+      const restantes = [];
+      for (const item of fila) {
+        try {
+          await enviarParaPlanilha(url, item);
+        } catch (e) {
+          restantes.push(item);
+        }
+      }
+      localStorage.setItem("fin_fila_offline", JSON.stringify(restantes));
+      atualizarBarraOffline();
+      if (restantes.length === 0) {
+        mostrarMensagem("Todos os lançamentos offline foram sincronizados!", "ok");
+      }
+    }
+
+    function mostrarMensagem(texto, tipo) {
+      const el = document.getElementById("statusMsg");
+      el.textContent = texto;
+      el.className = `status-msg ${tipo}`;
+      setTimeout(() => { el.style.display = "none"; }, 4500);
+    }
+  </script>
+</body>
+</html>
