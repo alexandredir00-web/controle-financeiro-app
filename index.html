@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Finanças 360º • Lançamentos</title>
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#206a4e" />
   <style>
     :root {
       --primary: #206a4e;
@@ -285,8 +287,7 @@
   </div>
 
   <script>
-    // Cole aqui a URL gerada no Google Apps Script caso queira deixar fixa no código
-    const DEFAULT_API_URL = "";
+    const DEFAULT_API_URL = "https://script.google.com/macros/s/AKfycbwn21c0G8CFaS4jKKHQBcOerg4duIC57LtnbVXZq3_3umV0X8cGg0UrujBUsHfpm1zNwA/exec";
     const DEFAULT_TOKEN = "WORKANA_FIN_2026";
 
     let tipoAtual = "SAÍDA";
@@ -463,6 +464,12 @@
       el.textContent = texto;
       el.className = `status-msg ${tipo}`;
       setTimeout(() => { el.style.display = "none"; }, 4500);
+    }
+
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js").catch(() => {});
+      });
     }
   </script>
 </body>
