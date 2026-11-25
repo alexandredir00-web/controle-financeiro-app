@@ -184,6 +184,17 @@
     .recent-right { text-align: right; font-weight: 700; font-size: 0.92rem; }
     .recent-right small { display: block; font-weight: 500; font-size: 0.75rem; opacity: 0.85; }
 
+    .badge-pendente {
+      display: inline-block;
+      background: #fef3c7;
+      color: #92400e;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 6px;
+      margin-left: 6px;
+    }
+
     .toast {
       margin-top: 10px;
       padding: 10px;
@@ -242,7 +253,7 @@
           </div>
         </div>
         <div style="display:flex; gap:6px;">
-          <button type="button" class="icon-btn" onclick="atualizarDados(true)">↻</button>
+          <button type="button" class="icon-btn" onclick="sincronizarTudo(true)">↻</button>
           <button type="button" class="icon-btn" onclick="toggleConfig()">⚙️</button>
         </div>
       </div>
@@ -339,7 +350,7 @@
         <div class="panel">
           <h3>
             <span>Últimos 5 Lançamentos</span>
-            <button type="button" class="icon-btn" onclick="atualizarDados(true)">Atualizar</button>
+            <button type="button" class="icon-btn" onclick="sincronizarTudo(true)">Atualizar</button>
           </h3>
           <div id="listaUltimos5"></div>
         </div>
@@ -364,13 +375,31 @@
 
     document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("data").valueAsDate = new Date();
-      document.getElementById("apiUrl").value = localStorage.getItem("fin_api_url") || DEFAULT_API_URL;
+      // Garante a URL mais recente se ainda estiver na URL antiga
+      const urlSalva = localStorage.getItem("fin_api_url");
+      const urlFinal = (!urlSalva || urlSalva.includes("AKfycbwn21c0G8CFaS4jKKHQBcOerg4duIC57LtnbVXZq3_3umV0X8cGg0UrujBUsHfpm1zNwA"))
+        ? DEFAULT_API_URL
+        : urlSalva;
+      localStorage.setItem("fin_api_url", urlFinal);
+
+      document.getElementById("apiUrl").value = urlFinal;
       document.getElementById("apiToken").value = localStorage.getItem("fin_api_token") || DEFAULT_TOKEN;
 
       abrirNovoLancamento("SAÍDA");
       renderizarCacheNaTela();
-      atualizarDados(false);
+      sincronizarTudo(false);
     });
+
+    window.addEventListener("online", () => {
+      sincronizarTudo(true);
+    });
+
+    function getConfigAtiva() {
+      return {
+        url: (document.getElementById("apiUrl").value || localStorage.getItem("fin_api_url") || DEFAULT_API_URL).trim(),
+        token: (document.getElementById("apiToken").value || localStorage.getItem("fin_api_token") || DEFAULT_TOKEN).trim()
+      };
+    }
 
     function mudarAba(aba) {
       const isInicio = aba === "inicio";
@@ -386,10 +415,11 @@
     }
 
     function salvarConfig() {
-      localStorage.setItem("fin_api_url", document.getElementById("apiUrl").value.trim());
-      localStorage.setItem("fin_api_token", document.getElementById("apiToken").value.trim());
+      const cfg = getConfigAtiva();
+      localStorage.setItem("fin_api_url", cfg.url);
+      localStorage.setItem("fin_api_token", cfg.token);
       mostrarToast("Configuração salva!", "ok");
-      atualizarDados(true);
+      sincronizarTudo(true);
     }
 
     function abrirNovoLancamento(tipo) {
@@ -407,6 +437,18 @@
       return Number(v || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
     }
 
+    function chaveOrdenacao(item) {
+      // Suporta YYYY-MM-DD ou DD/MM/YYYY + timestamp local
+      let base = 0;
+      if (item.dataIso && /^\d{4}-\d{2}-\d{2}$/.test(item.dataIso)) {
+        base = new Date(item.dataIso + "T12:00:00").getTime() || 0;
+      } else if (item.data && /^\d{2}\/\d{2}\/\d{4}$/.test(item.data)) {
+        const [d, m, a] = item.data.split("/");
+        base = new Date(`${a}-${m}-${d}T12:00:00`).getTime() || 0;
+      }
+      return base + Number(item.criadoEm || 0);
+    }
+
     function renderizarCacheNaTela() {
       const resumo = JSON.parse(localStorage.getItem("fin_resumo_cache") || '{"saldo":0,"receita":0,"despesa":0}');
       document.getElementById("saldoTotal").textContent = formatarMoeda(resumo.saldo);
@@ -415,27 +457,45 @@
       renderizarUltimos5();
     }
 
-    function obterListaCombinadaUltimos5() {
-      const locais = JSON.parse(localStorage.getItem("fin_recentes_locais") || "[]");
+    function obterListaOrganizadaUltimos5() {
+      const fila = JSON.parse(localStorage.getItem("fin_fila_pendente") || "[]");
       const remotos = JSON.parse(localStorage.getItem("fin_recentes_remotos") || "[]");
-      return [...locais, ...remotos].slice(0, 5);
+
+      const combinados = [
+        ...fila.map(item => ({ ...item, pendente: true })),
+        ...remotos.map(item => ({ ...item, pendente: false }))
+      ];
+
+      // Remove possíveis duplicatas exatas por chave de lançamento
+      const mapaUnico = new Map();
+      for (const item of combinados) {
+        const chave = item.localId || item.id || `${item.data}|${item.descricao}|${item.valor}`;
+        if (!mapaUnico.has(chave)) {
+          mapaUnico.set(chave, item);
+        }
+      }
+
+      return Array.from(mapaUnico.values())
+        .sort((a, b) => chaveOrdenacao(b) - chaveOrdenacao(a))
+        .slice(0, 5);
     }
 
     function renderizarUltimos5() {
-      const lista = obterListaCombinadaUltimos5();
+      const lista = obterListaOrganizadaUltimos5();
       const container = document.getElementById("listaUltimos5");
       if (!lista.length) {
         container.innerHTML = `<p style="opacity:0.8;font-size:0.86rem;margin:0;">Nenhum lançamento recente encontrado.</p>`;
         return;
       }
       container.innerHTML = lista.map(item => {
-        const isEntrada = item.tipo === "ENTRADA";
+        const isEntrada = String(item.tipo).toUpperCase() === "ENTRADA";
         const sinal = isEntrada ? "+" : "-";
         const cor = isEntrada ? "#86efac" : "#fca5a5";
+        const badge = item.pendente ? `<span class="badge-pendente">Na fila</span>` : "";
         return `
           <div class="recent-item">
             <div class="recent-left">
-              <strong>${item.descricao || item.categoria}</strong>
+              <strong>${item.descricao || item.categoria}${badge}</strong>
               <small>${item.data} • ${item.formaPagamento || item.instituicao || ""}</small>
             </div>
             <div class="recent-right" style="color:${cor};">
@@ -447,43 +507,132 @@
       }).join("");
     }
 
-    async function atualizarDados(mostrarFeedback) {
-      const url = (document.getElementById("apiUrl").value || DEFAULT_API_URL).trim();
-      const token = (document.getElementById("apiToken").value || DEFAULT_TOKEN).trim();
-      if (!url) return;
+    async function enviarRegistroServidor(url, registro) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 8000);
+      try {
+        // Envia via POST e verifica resposta quando possível
+        const res = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(registro),
+          signal: controller.signal
+        });
+        clearTimeout(timer);
+        if (!res.ok) throw new Error("Falha HTTP " + res.status);
+        const data = await res.json();
+        if (data && data.status !== "success") {
+          throw new Error(data.message || "Erro no Apps Script");
+        }
+        return true;
+      } catch (err) {
+        clearTimeout(timer);
+        // Em WebView/Apps Script redirecionado, tenta no-cors como fallback de envio
+        try {
+          await fetch(url, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify(registro)
+          });
+          return true;
+        } catch (e2) {
+          return false;
+        }
+      }
+    }
+
+    async function processarFilaPendente() {
+      const cfg = getConfigAtiva();
+      let fila = JSON.parse(localStorage.getItem("fin_fila_pendente") || "[]");
+      if (!cfg.url || fila.length === 0) return { enviados: 0, restantes: 0 };
+
+      let enviados = 0;
+      const restantes = [];
+
+      for (const item of fila) {
+        const ok = await enviarRegistroServidor(cfg.url, item);
+        if (ok) {
+          enviados++;
+        } else {
+          restantes.push(item);
+        }
+      }
+
+      localStorage.setItem("fin_fila_pendente", JSON.stringify(restantes));
+      renderizarUltimos5();
+      return { enviados, restantes: restantes.length };
+    }
+
+    async function buscarDadosPlanilha() {
+      const cfg = getConfigAtiva();
+      if (!cfg.url) return false;
+
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 9000);
 
       try {
-        const res = await fetch(`${url}?token=${encodeURIComponent(token)}`, { cache: "no-store" });
+        const endpoint = `${cfg.url}?token=${encodeURIComponent(cfg.token)}&_t=${Date.now()}`;
+        const res = await fetch(endpoint, {
+          method: "GET",
+          cache: "no-store",
+          signal: controller.signal
+        });
+        clearTimeout(timer);
+        if (!res.ok) return false;
+
         const json = await res.json();
         if (json.status === "success") {
           if (Array.isArray(json.ultimos5)) {
-            localStorage.setItem("fin_recentes_remotos", JSON.stringify(json.ultimos5.slice(0, 5)));
-            localStorage.removeItem("fin_recentes_locais");
+            localStorage.setItem("fin_recentes_remotos", JSON.stringify(json.ultimos5.slice(0, 10)));
           }
           if (json.resumo) {
             localStorage.setItem("fin_resumo_cache", JSON.stringify(json.resumo));
           }
           renderizarCacheNaTela();
-          if (mostrarFeedback) mostrarToast("Sincronizado com a planilha!", "ok");
+          return true;
         }
+        return false;
       } catch (e) {
-        if (mostrarFeedback) mostrarToast("Sem conexão agora; exibindo dados locais.", "warn");
+        clearTimeout(timer);
+        return false;
       }
     }
 
-    document.getElementById("formLancamento").addEventListener("submit", (e) => {
+    async function sincronizarTudo(mostrarFeedback) {
+      const statusFila = await processarFilaPendente();
+      const leuPlanilha = await buscarDadosPlanilha();
+
+      if (mostrarFeedback) {
+        if (leuPlanilha && statusFila.restantes === 0) {
+          const extra = statusFila.enviados > 0 ? ` (${statusFila.enviados} pendente(s) enviado(s))` : "";
+          mostrarToast(`Sincronizado com a planilha!${extra}`, "ok");
+        } else if (statusFila.enviados > 0 && statusFila.restantes === 0) {
+          mostrarToast(`${statusFila.enviados} lançamento(s) enviado(s) à planilha!`, "ok");
+        } else if (!leuPlanilha && statusFila.restantes > 0) {
+          mostrarToast(`Sem rede agora: ${statusFila.restantes} na fila para envio automático.`, "warn");
+        } else if (!leuPlanilha) {
+          mostrarToast("Rede instável no momento; mantendo dados locais.", "warn");
+        }
+      }
+    }
+
+    document.getElementById("formLancamento").addEventListener("submit", async (e) => {
       e.preventDefault();
-      const url = (document.getElementById("apiUrl").value || DEFAULT_API_URL).trim();
-      const token = (document.getElementById("apiToken").value || DEFAULT_TOKEN).trim();
+      const cfg = getConfigAtiva();
 
       const valorNum = parseFloat(document.getElementById("valor").value);
       const dataIso = document.getElementById("data").value;
       const [ano, mes, dia] = dataIso.split("-");
       const dataBr = `${dia}/${mes}/${ano}`;
+      const agoraMs = Date.now();
 
       const registro = {
-        token,
+        localId: `LOCAL-${agoraMs}-${Math.random().toString(36).slice(2, 6)}`,
+        criadoEm: agoraMs,
+        token: cfg.token,
         data: dataIso,
+        dataIso: dataIso,
         dataFormatada: dataBr,
         tipo: tipoSelecionado,
         categoria: document.getElementById("categoria").value,
@@ -494,19 +643,7 @@
         status: "Confirmado"
       };
 
-      // Atualiza tela na hora sem esperar resposta lenta
-      const locais = JSON.parse(localStorage.getItem("fin_recentes_locais") || "[]");
-      locais.unshift({
-        data: dataBr,
-        tipo: registro.tipo,
-        categoria: registro.categoria,
-        descricao: registro.descricao,
-        instituicao: registro.instituicao,
-        formaPagamento: registro.formaPagamento,
-        valor: registro.valor
-      });
-      localStorage.setItem("fin_recentes_locais", JSON.stringify(locais.slice(0, 5)));
-
+      // 1. Atualiza resumo na hora e coloca na fila pendente até confirmar envio
       const resumo = JSON.parse(localStorage.getItem("fin_resumo_cache") || '{"saldo":0,"receita":0,"despesa":0}');
       if (registro.tipo === "ENTRADA") {
         resumo.receita = Number(resumo.receita || 0) + valorNum;
@@ -516,26 +653,34 @@
         resumo.saldo = Number(resumo.saldo || 0) - valorNum;
       }
       localStorage.setItem("fin_resumo_cache", JSON.stringify(resumo));
-      renderizarCacheNaTela();
 
+      const fila = JSON.parse(localStorage.getItem("fin_fila_pendente") || "[]");
+      fila.unshift(registro);
+      localStorage.setItem("fin_fila_pendente", JSON.stringify(fila));
+
+      renderizarCacheNaTela();
       document.getElementById("valor").value = "";
       document.getElementById("descricao").value = "";
-      mostrarToast("Salvo na hora! Enviando à planilha...", "ok");
+      mostrarToast("Registrado na hora! Enviando à planilha...", "ok");
 
-      // Envio em segundo plano sem bloquear o botão
-      fetch(url, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify(registro)
-      }).catch(() => {});
+      // 2. Tenta enviar e sincronizar em segundo plano
+      const enviado = await enviarRegistroServidor(cfg.url, registro);
+      if (enviado) {
+        const filaAtual = JSON.parse(localStorage.getItem("fin_fila_pendente") || "[]")
+          .filter(item => item.localId !== registro.localId);
+        localStorage.setItem("fin_fila_pendente", JSON.stringify(filaAtual));
+        await buscarDadosPlanilha();
+      } else {
+        mostrarToast("Sem conexão: salvo na fila e será enviado assim que entrar na rede.", "warn");
+      }
     });
 
     function mostrarToast(msg, tipo) {
       const el = document.getElementById("toast");
       el.textContent = msg;
       el.className = `toast ${tipo}`;
-      setTimeout(() => { el.style.display = "none"; }, 3000);
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => { el.style.display = "none"; }, 3500);
     }
 
     if ("serviceWorker" in navigator) {
