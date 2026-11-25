@@ -61,7 +61,7 @@ cat <<'EOF' > twa-manifest.json
 }
 EOF
 
-yes | bubblewrap update --yes || true
-yes | bubblewrap build --skipPwaValidation || true
+printf "n\n" | bubblewrap update --yes || true
+printf "n\n" | bubblewrap build --skipPwaValidation || true
 find . -name "*.apk" -maxdepth 5 -exec cp {} /tmp/app-release-signed.apk \;
 ls -lh /tmp/app-release-signed.apk
