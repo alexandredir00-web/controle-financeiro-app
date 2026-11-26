@@ -4,7 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <meta name="theme-color" content="#0b1120">
-  <title>Gerenciador Financeiro Real</title>
+  <link rel="manifest" href="manifest.json">
+  <title>Finanças 360º Smart — Caixa, Contas & Passivos</title>
   <style>
     :root {
       --bg: #0b1120;
@@ -29,7 +30,6 @@
       padding-bottom: calc(82px + env(safe-area-inset-bottom, 0px));
     }
 
-    /* TOPO RESPONSIVO (PC E CELULAR) */
     .topbar {
       background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
       padding: calc(16px + env(safe-area-inset-top, 0px)) 20px 18px 20px;
@@ -49,7 +49,7 @@
     .topbar h1 { font-size: 19px; font-weight: 800; letter-spacing: 0.2px; }
     .topbar p { font-size: 12px; color: var(--muted); margin-top: 2px; }
 
-    .status-pills { display: flex; gap: 8px; align-items: center; }
+    .status-pills { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 
     .pill {
       font-size: 11px;
@@ -70,7 +70,6 @@
       padding: 0 14px;
     }
 
-    /* CARDS DE RESUMO CONTÁBIL REAL */
     .resumo-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -93,19 +92,20 @@
     .kpi-val { font-size: clamp(17px, 4vw, 21px); font-weight: 800; margin-top: 6px; }
     .kpi-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
 
-    /* MENU DE NAVEGAÇÃO (ABAS NO PC E BARRA FIXA NO CELULAR) */
     .nav-tabs {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       margin-bottom: 16px;
       background: var(--card);
       padding: 6px;
       border-radius: 12px;
       border: 1px solid var(--border);
+      overflow-x: auto;
     }
 
     .tab-btn {
       flex: 1;
+      min-width: 95px;
       padding: 10px 8px;
       border: none;
       border-radius: 8px;
@@ -114,7 +114,7 @@
       font-size: 12px;
       font-weight: 700;
       cursor: pointer;
-      position: relative;
+      white-space: nowrap;
     }
 
     .tab-btn.ativo {
@@ -152,14 +152,15 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 8px;
     }
 
-    /* SELETOR DE TIPO DE OPERAÇÃO */
+    /* SELETOR RÁPIDO DE TIPOS */
     .tipo-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 8px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     @media (max-width: 600px) {
@@ -176,12 +177,15 @@
       font-weight: 700;
       cursor: pointer;
       text-align: center;
+      transition: 0.15s;
     }
 
-    .tipo-opt.sel-receita { border-color: var(--green); color: #34d399; background: rgba(16, 185, 129, 0.1); }
-    .tipo-opt.sel-despesa { border-color: var(--red); color: #f87171; background: rgba(239, 68, 68, 0.1); }
-    .tipo-opt.sel-parcelado { border-color: var(--amber); color: #fbbf24; background: rgba(245, 158, 11, 0.1); }
-    .tipo-opt.sel-emprestimo { border-color: var(--purple); color: #c084fc; background: rgba(168, 85, 247, 0.1); }
+    .tipo-opt.sel-despesa { border-color: var(--red); color: #f87171; background: rgba(239, 68, 68, 0.12); }
+    .tipo-opt.sel-receita { border-color: var(--green); color: #34d399; background: rgba(16, 185, 129, 0.12); }
+    .tipo-opt.sel-parcelado { border-color: var(--amber); color: #fbbf24; background: rgba(245, 158, 11, 0.12); }
+    .tipo-opt.sel-emprestimo { border-color: var(--purple); color: #c084fc; background: rgba(168, 85, 247, 0.12); }
+    .tipo-opt.sel-transferencia { border-color: var(--blue); color: #38bdf8; background: rgba(56, 189, 248, 0.12); }
+    .tipo-opt.sel-receber { border-color: #2dd4bf; color: #5eead4; background: rgba(45, 212, 191, 0.12); }
 
     .form-grid {
       display: grid;
@@ -213,6 +217,27 @@
 
     input:focus, select:focus { outline: none; border-color: var(--blue); }
 
+    .barra-atalho-gaveta {
+      margin-top: 12px;
+      padding: 10px 12px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px dashed var(--border);
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .gaveta-box {
+      margin-top: 8px;
+      padding: 12px;
+      background: rgba(9, 14, 26, 0.65);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+
     .box-coerencia {
       margin-top: 14px;
       padding: 12px 14px;
@@ -221,7 +246,7 @@
       border: 1px solid rgba(56, 189, 248, 0.25);
       font-size: 12px;
       color: #bae6fd;
-      line-height: 1.5;
+      line-height: 1.55;
     }
 
     .btn-submit {
@@ -252,7 +277,9 @@
     }
 
     .item-lista.pago-receita { border-left-color: var(--green); }
+    .item-lista.pago-credito { border-left-color: var(--purple); }
     .item-lista.pago-despesa { border-left-color: var(--red); }
+    .item-lista.pago-transf { border-left-color: var(--blue); }
     .item-lista.vencido { border-left-color: var(--red); background: rgba(239, 68, 68, 0.06); }
     .item-lista.pendente { border-left-color: var(--amber); }
 
@@ -297,8 +324,8 @@
   <div class="topbar">
     <div class="topbar-inner">
       <div>
-        <h1>Controle Financeiro Real</h1>
-        <p>Caixa efetivo, boletos programados e gestão de empréstimos</p>
+        <h1>Finanças 360º Smart</h1>
+        <p>Auto-classificação inteligente, múltiplas contas e partida dobrada real</p>
       </div>
       <div class="status-pills">
         <button class="pill pill-notif" onclick="ativarNotificacoesVisor()">🔔 Ativar Alertas no Visor</button>
@@ -309,139 +336,201 @@
 
   <div class="wrapper">
 
-    <!-- RESUMO CONTÁBIL COERENTE -->
+    <!-- KPIs CONTÁBEIS REAIS -->
     <div class="resumo-grid">
       <div class="kpi-card">
         <div class="kpi-label">Saldo Real em Caixa</div>
         <div id="kpi-saldo" class="kpi-val" style="color:var(--blue);">R$ 0,00</div>
-        <div class="kpi-sub">Entradas pagas − Saídas pagas</div>
+        <div class="kpi-sub">Soma de todas as contas hoje</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">Entradas Confirmadas</div>
+        <div class="kpi-label">Receitas Próprias</div>
         <div id="kpi-entradas" class="kpi-val" style="color:var(--green);">R$ 0,00</div>
-        <div class="kpi-sub">Dinheiro efetivamente recebido</div>
+        <div class="kpi-sub">Ganhos reais (exclui empréstimos)</div>
       </div>
       <div class="kpi-card">
         <div class="kpi-label">Saídas Reais (Despesas)</div>
         <div id="kpi-saidas" class="kpi-val" style="color:var(--red);">R$ 0,00</div>
-        <div class="kpi-sub">Somente o que já foi pago</div>
+        <div class="kpi-sub">Somente dinheiro efetivamente pago</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">A Pagar (Boletos / Empr.)</div>
+        <div class="kpi-label">Passivo Total (A Pagar)</div>
         <div id="kpi-pendente" class="kpi-val" style="color:var(--amber);">R$ 0,00</div>
-        <div class="kpi-sub">Compromissos futuros em aberto</div>
+        <div class="kpi-sub">Parcelas de empréstimos + boletos</div>
       </div>
     </div>
 
     <!-- ABAS DE NAVEGAÇÃO -->
     <div class="nav-tabs">
-      <button id="btn-tab-lancar" class="tab-btn ativo" onclick="abrirAba('lancar', this)">➕ Lançar / Programar</button>
+      <button id="btn-tab-lancar" class="tab-btn ativo" onclick="abrirAba('lancar', this)">➕ Lançar</button>
       <button id="btn-tab-pagar" class="tab-btn" onclick="abrirAba('pagar', this)">
-        🔔 A Pagar <span id="contador-pagar" class="badge-count" style="display:none;">0</span>
+        🔔 A Pagar / Receber <span id="contador-pagar" class="badge-count" style="display:none;">0</span>
       </button>
-      <button id="btn-tab-emprestimos" class="tab-btn" onclick="abrirAba('emprestimos', this)">🏦 Empréstimos</button>
-      <button id="btn-tab-extrato" class="tab-btn" onclick="abrirAba('extrato', this)">📊 Extrato Real</button>
+      <button id="btn-tab-contas" class="tab-btn" onclick="abrirAba('contas', this)">💳 Contas & Empr.</button>
+      <button id="btn-tab-extrato" class="tab-btn" onclick="abrirAba('extrato', this)">📊 Extrato Caixa</button>
     </div>
 
-    <!-- ABA 1: LANÇAMENTO -->
+    <!-- ABA 1: LANÇAMENTO INTELIGENTE -->
     <div id="aba-lancar" class="secao ativa">
       <div class="card">
         <div class="card-header">
-          <span>Novo Registro Financeiro</span>
+          <span>Lançamento Rápido</span>
+          <span id="badge-auto-cat" style="font-size:12px; color:var(--blue);"></span>
         </div>
 
-        <label>Escolha o tipo de movimentação:</label>
+        <!-- BOTÕES PRINCIPAIS + MAIS TIPOS -->
         <div class="tipo-grid">
-          <div id="opt-DESPESA" class="tipo-opt sel-despesa" onclick="selecionarTipo('DESPESA')">💸 Saída Real (À Vista)</div>
-          <div id="opt-RECEITA" class="tipo-opt" onclick="selecionarTipo('RECEITA')">💰 Entrada Real</div>
-          <div id="opt-PARCELADO" class="tipo-opt" onclick="selecionarTipo('PARCELADO')">💳 Cartão / Boleto Prog.</div>
-          <div id="opt-EMPRESTIMO" class="tipo-opt" onclick="selecionarTipo('EMPRESTIMO')">🏦 Empréstimo</div>
+          <div class="tipo-opt sel-despesa" onclick="selecionarTipo('despesa', this)">💸 Saída Real</div>
+          <div class="tipo-opt" onclick="selecionarTipo('receita', this)">💰 Entrada Real</div>
+          <div class="tipo-opt" onclick="selecionarTipo('parcelado', this)">💳 Parcelado / Boleto</div>
+          <div class="tipo-opt" onclick="abrirMaisTipos(this)">⚙️ Mais Opções ▾</div>
+        </div>
+
+        <div id="sub-tipos-outros" class="tipo-grid" style="display:none; grid-template-columns: repeat(3, minmax(0, 1fr));">
+          <div class="tipo-opt" onclick="selecionarTipo('emprestimo', this)">🏦 Pegar Empréstimo</div>
+          <div class="tipo-opt" onclick="selecionarTipo('transferencia', this)">🔄 Transferência</div>
+          <div class="tipo-opt" onclick="selecionarTipo('receber', this)">📥 A Receber (Prazo)</div>
         </div>
 
         <div class="form-grid">
           <div>
-            <label>Descrição *</label>
-            <input type="text" id="descricao" placeholder="Ex: Conta de Energia, Compra Peças, Empréstimo BB...">
+            <label>Descrição (auto-classifica) *</label>
+            <input type="text" id="inp-descricao" placeholder="Ex: Gasolina posto, Mercado, DAS MEI, Cliente..." oninput="detectarCategoriaAutomatica(this.value)">
           </div>
           <div>
-            <label>Categoria</label>
-            <select id="categoria">
-              <option value="Operacional / Contas">Operacional / Contas</option>
-              <option value="Alimentação & Casa">Alimentação & Casa</option>
-              <option value="Cartão de Crédito">Cartão de Crédito</option>
-              <option value="Boletos / Fornecedores">Boletos / Fornecedores</option>
-              <option value="Empréstimo / Financiamento">Empréstimo / Financiamento</option>
-              <option value="Salário / Pró-labore">Salário / Pró-labore</option>
-              <option value="Serviços / Vendas">Serviços / Vendas</option>
+            <label id="lbl-valor-principal">Valor (R$) *</label>
+            <input type="number" id="inp-valor" step="0.01" inputmode="decimal" placeholder="0,00" oninput="atualizarCoerencia()">
+          </div>
+        </div>
+
+        <!-- LINHA DINÂMICA DE PARCELAS -->
+        <div id="linha-parcelas-rapida" class="form-grid" style="display:none;">
+          <div>
+            <label>Quantidade de Parcelas *</label>
+            <input type="number" id="inp-qtd-parcelas" min="1" max="120" value="3" oninput="atualizarCoerencia()">
+          </div>
+          <div>
+            <label>O valor acima é:</label>
+            <select id="inp-modo-parcela" onchange="atualizarCoerencia()">
+              <option value="PARCELA">Valor de CADA parcela</option>
+              <option value="TOTAL">Valor TOTAL da operação</option>
             </select>
           </div>
         </div>
 
-        <div class="form-grid">
-          <div>
-            <label id="label-valor">Valor Pago Hoje (R$) *</label>
-            <input type="number" id="valor" step="0.01" inputmode="decimal" placeholder="0,00" oninput="atualizarExplicacaoLogica()">
-          </div>
-          <div>
-            <label id="label-data">Data da Movimentação *</label>
-            <input type="date" id="dataVencimento">
-          </div>
+        <!-- CAMPO EXCLUSIVO DE EMPRÉSTIMO (VALOR LÍQUIDO QUE ENTRA NO CAIXA) -->
+        <div id="grp-valor-total" style="display:none;">
+          <label>Valor Líquido Liberado na Conta Hoje (R$) *</label>
+          <input type="number" id="inp-valor-liquido-emp" step="0.01" inputmode="decimal" placeholder="Ex: 5000,00" oninput="atualizarCoerencia()">
         </div>
 
-        <!-- CAMPOS ESPECÍFICOS PARA PARCELAMENTO / BOLETOS / EMPRÉSTIMO -->
-        <div id="box-parcelas" style="display:none;">
+        <!-- CAMPO EXCLUSIVO DE TRANSFERÊNCIA -->
+        <div id="grp-conta-destino" style="display:none;">
+          <label>Conta de Destino *</label>
+          <select id="inp-conta-destino" onchange="atualizarCoerencia()">
+            <option value="Banco Inter">Banco Inter</option>
+            <option value="Banco do Brasil">Banco do Brasil</option>
+            <option value="Bradesco">Bradesco</option>
+            <option value="Mercado Pago">Mercado Pago</option>
+            <option value="Dinheiro / Caixa Físico">Dinheiro / Caixa Físico</option>
+          </select>
+        </div>
+
+        <!-- VENCIMENTO -->
+        <div id="grp-vencimento" style="display:none;">
+          <label>Data do 1º Vencimento *</label>
+          <input type="date" id="inp-vencimento" onchange="atualizarCoerencia()">
+        </div>
+
+        <!-- GAVETA COMPACTA DE CONTA, CATEGORIA E PERFIL -->
+        <div class="barra-atalho-gaveta" onclick="toggleDetalhesAvancados()">
+          <span style="color:var(--muted);">Conta & Perfil: <b id="resumo-padrao" style="color:var(--text);">Banco Inter • Pessoal</b></span>
+          <span style="color:var(--blue); font-weight:700;">Alterar ▾</span>
+        </div>
+
+        <div id="gaveta-avancada" class="gaveta-box" style="display:none;">
           <div class="form-grid">
             <div>
-              <label>Quantidade de Parcelas / Boletos *</label>
-              <input type="number" id="qtdParcelas" min="1" max="120" value="3" oninput="atualizarExplicacaoLogica()">
+              <label>Conta / Banco</label>
+              <select id="inp-conta" onchange="atualizarResumoPadrao()">
+                <option value="Banco Inter">Banco Inter</option>
+                <option value="Banco do Brasil">Banco do Brasil</option>
+                <option value="Bradesco">Bradesco</option>
+                <option value="Mercado Pago">Mercado Pago</option>
+                <option value="Dinheiro / Caixa Físico">Dinheiro / Caixa Físico</option>
+              </select>
             </div>
             <div>
-              <label>O valor digitado acima é:</label>
-              <select id="modoValorParcela" onchange="atualizarExplicacaoLogica()">
-                <option value="TOTAL">O valor TOTAL da compra/contrato</option>
-                <option value="PARCELA">O valor de CADA parcela</option>
+              <label>Perfil (Pessoal / Empresa)</label>
+              <select id="inp-entidade" onchange="atualizarResumoPadrao()">
+                <option value="Pessoal">Pessoal</option>
+                <option value="Negócio/MEI">Negócio/MEI</option>
               </select>
             </div>
           </div>
+
+          <div class="form-grid">
+            <div>
+              <label>Categoria</label>
+              <select id="inp-categoria">
+                <option value="Alimentação">Alimentação</option>
+                <option value="Transporte">Transporte</option>
+                <option value="Moradia & Contas Fixas">Moradia & Contas Fixas</option>
+                <option value="Saúde & Educação">Saúde & Educação</option>
+                <option value="Salário / Pró-labore">Salário / Pró-labore</option>
+                <option value="Operacional MEI / Trabalho">Operacional MEI / Trabalho</option>
+                <option value="Empréstimo / Financiamento">Empréstimo / Financiamento</option>
+                <option value="Outros">Outros</option>
+              </select>
+            </div>
+            <div>
+              <label>Data do Lançamento</label>
+              <input type="date" id="inp-data-lanc">
+            </div>
+          </div>
         </div>
 
-        <div id="explicacao-logica" class="box-coerencia">
-          💸 <b>Saída Real:</b> Este valor será abatido imediatamente do seu Saldo em Caixa e contabilizado como despesa efetiva.
+        <div id="box-coerencia" class="box-coerencia">
+          💸 <b>Saída Real:</b> Abate imediatamente do saldo da conta selecionada.
         </div>
 
-        <button class="btn-submit" onclick="registrarLancamento()">SALVAR E SINCRONIZAR</button>
+        <button class="btn-submit" onclick="salvarLancamentoSmart()">CONFIRMAR E SINCRONIZAR</button>
       </div>
     </div>
 
-    <!-- ABA 2: BOLETOS E PARCELAS PENDENTES -->
+    <!-- ABA 2: PASSIVOS A PAGAR & CONTAS A RECEBER -->
     <div id="aba-pagar" class="secao">
       <div class="card">
         <div class="card-header">
-          <span>🔔 Compromissos Programados (Notificação Ativa)</span>
+          <span>🔔 Compromissos Futuros (Passivos & Recebíveis)</span>
         </div>
-        <p style="font-size:12px; color:var(--muted); margin-bottom:14px;">
-          Enquanto você não confirmar o pagamento abaixo, o aplicativo mantém o alerta agendado no visor do celular e não abate o valor do seu caixa.
-        </p>
         <div id="lista-pendentes"></div>
       </div>
     </div>
 
-    <!-- ABA 3: EMPRÉSTIMOS EM ANDAMENTO -->
-    <div id="aba-emprestimos" class="secao">
+    <!-- ABA 3: SALDO POR CONTA & EMPRÉSTIMOS -->
+    <div id="aba-contas" class="secao">
       <div class="card">
         <div class="card-header">
-          <span>🏦 Controle de Empréstimos & Amortização</span>
+          <span>💳 Saldo Real por Instituição / Conta</span>
+        </div>
+        <div id="lista-saldos-contas"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span>🏦 Empréstimos & Amortização</span>
         </div>
         <div id="lista-emprestimos"></div>
       </div>
     </div>
 
-    <!-- ABA 4: EXTRATO REAL (SOMENTE MOVIMENTAÇÕES EFETIVADAS) -->
+    <!-- ABA 4: EXTRATO DE CAIXA -->
     <div id="aba-extrato" class="secao">
       <div class="card">
         <div class="card-header">
-          <span>📊 Histórico de Entradas e Saídas Reais</span>
-          <button class="pill pill-online" onclick="sincronizarComPlanilha()">↻ Atualizar da Planilha</button>
+          <span>📊 Extrato Efetivo do Caixa</span>
+          <button class="pill pill-online" onclick="sincronizarComPlanilha()">↻ Sincronizar</button>
         </div>
         <div id="lista-extrato"></div>
       </div>
@@ -454,9 +543,12 @@
 
   let registros = JSON.parse(localStorage.getItem("fin_real_registros") || "[]");
   let filaPendenteSync = JSON.parse(localStorage.getItem("fin_real_fila") || "[]");
-  let tipoAtual = "DESPESA";
+  let tipoAtual = "despesa";
 
-  document.getElementById("dataVencimento").valueAsDate = new Date();
+  const hoje = new Date();
+  document.getElementById("inp-data-lanc").valueAsDate = hoje;
+  const proxMes = new Date(hoje.getFullYear(), hoje.getMonth() + 1, hoje.getDate());
+  document.getElementById("inp-vencimento").valueAsDate = proxMes;
 
   function moeda(v) {
     return "R$ " + Number(v || 0).toFixed(2).replace(".", ",");
@@ -474,108 +566,269 @@
     renderizarTudo();
   }
 
-  function selecionarTipo(tipo) {
-    tipoAtual = tipo;
-    ["DESPESA", "RECEITA", "PARCELADO", "EMPRESTIMO"].forEach(t => {
-      const el = document.getElementById("opt-" + t);
-      el.className = "tipo-opt" + (t === tipo ? " sel-" + t.toLowerCase() : "");
-    });
+  // 1. AUTO-CLASSIFICADOR POR PALAVRA-CHAVE (ECONOMIZA CLIQUES)
+  function detectarCategoriaAutomatica(texto) {
+    const t = texto.toLowerCase();
+    const selCat = document.getElementById("inp-categoria");
+    const badge = document.getElementById("badge-auto-cat");
+    let achou = "";
 
-    const boxParcelas = document.getElementById("box-parcelas");
-    const labelValor = document.getElementById("label-valor");
-    const labelData = document.getElementById("label-data");
+    if (/mercado|ifood|lanche|restaurante|padaria|pizza|carne|açaí|almoço|jantar/.test(t)) achou = "Alimentação";
+    else if (/uber|99|gasolina|posto|combustivel|estacionamento|onibus|passagem|mecanico/.test(t)) achou = "Transporte";
+    else if (/aluguel|luz|energia|agua|internet|condominio|iptu|celular|vivo|claro|tim/.test(t)) achou = "Moradia & Contas Fixas";
+    else if (/farmacia|remedio|medico|consulta|exame|academia|curso|faculdade|escola/.test(t)) achou = "Saúde & Educação";
+    else if (/salario|pagamento|pix recebido|cliente|venda|freela|dividendo/.test(t)) achou = "Salário / Pró-labore";
+    else if (/mei|das|fornecedor|anuncio|estoque|empresa/.test(t)) {
+      achou = "Operacional MEI / Trabalho";
+      document.getElementById("inp-entidade").value = "Negócio/MEI";
+    }
 
-    if (tipo === "PARCELADO" || tipo === "EMPRESTIMO") {
-      boxParcelas.style.display = "block";
-      labelValor.innerText = "Valor (R$) *";
-      labelData.innerText = "Vencimento da 1ª Parcela *";
-    } else if (tipo === "RECEITA") {
-      boxParcelas.style.display = "none";
-      labelValor.innerText = "Valor Recebido Hoje (R$) *";
-      labelData.innerText = "Data do Recebimento *";
+    if (achou) {
+      selCat.value = achou;
+      badge.innerText = `• ${achou}`;
     } else {
-      boxParcelas.style.display = "none";
-      labelValor.innerText = "Valor Pago Hoje (R$) *";
-      labelData.innerText = "Data do Pagamento *";
+      badge.innerText = "";
     }
-    atualizarExplicacaoLogica();
+    atualizarResumoPadrao();
   }
 
-  function atualizarExplicacaoLogica() {
-    const box = document.getElementById("explicacao-logica");
-    const val = parseFloat(document.getElementById("valor").value) || 0;
-    const qtd = parseInt(document.getElementById("qtdParcelas").value) || 1;
-    const modo = document.getElementById("modoValorParcela").value;
+  // 2. CONTROLE DA INTERFACE SIMPLIFICADA
+  function abrirMaisTipos(el) {
+    const sub = document.getElementById("sub-tipos-outros");
+    sub.style.display = sub.style.display === "none" ? "grid" : "none";
+  }
 
-    if (tipoAtual === "DESPESA") {
-      box.innerHTML = `💸 <b>Saída Real:</b> Abate <b>${moeda(val)}</b> imediatamente do seu Saldo em Caixa.`;
-    } else if (tipoAtual === "RECEITA") {
-      box.innerHTML = `💰 <b>Entrada Real:</b> Soma <b>${moeda(val)}</b> imediatamente ao seu Saldo Disponível.`;
-    } else if (tipoAtual === "PARCELADO") {
-      const vParc = modo === "TOTAL" ? (val / qtd) : val;
-      box.innerHTML = `💳 <b>Programação Coerente:</b> Não desconta nada do seu saldo hoje. Gera <b>${qtd}x de ${moeda(vParc)}</b> em "A Pagar" com notificação no visor no dia de cada vencimento.`;
-    } else if (tipoAtual === "EMPRESTIMO") {
-      const vParc = modo === "TOTAL" ? (val / qtd) : val;
-      const vTotal = modo === "TOTAL" ? val : (val * qtd);
-      box.innerHTML = `🏦 <b>Controle de Empréstimo:</b> Programa <b>${qtd} parcelas de ${moeda(vParc)}</b> (Total: ${moeda(vTotal)}). Cada baixa reduz o saldo devedor e registra a saída real no dia do pagamento.`;
+  function toggleDetalhesAvancados() {
+    const gaveta = document.getElementById("gaveta-avancada");
+    gaveta.style.display = gaveta.style.display === "none" ? "block" : "none";
+  }
+
+  function atualizarResumoPadrao() {
+    const selConta = document.getElementById("inp-conta");
+    const nomeConta = selConta.options[selConta.selectedIndex]?.text.split(" (")[0] || "Conta";
+    const ent = document.getElementById("inp-entidade").value;
+    document.getElementById("resumo-padrao").innerText = `${nomeConta} • ${ent}`;
+    atualizarCoerencia();
+  }
+
+  // 3. SELETOR DE TIPO COM COERÊNCIA CONTÁBIL
+  function selecionarTipo(tipo, el) {
+    tipoAtual = tipo;
+    document.querySelectorAll(".tipo-opt").forEach(opt => opt.className = "tipo-opt");
+    el.classList.add("sel-" + tipo);
+
+    const linhaParcelas = document.getElementById("linha-parcelas-rapida");
+    const grpTotal = document.getElementById("grp-valor-total");
+    const grpDestino = document.getElementById("grp-conta-destino");
+    const grpVenc = document.getElementById("grp-vencimento");
+    const lblValor = document.getElementById("lbl-valor-principal");
+
+    linhaParcelas.style.display = "none";
+    grpTotal.style.display = "none";
+    grpDestino.style.display = "none";
+    grpVenc.style.display = "none";
+    lblValor.innerText = "Valor (R$) *";
+
+    if (tipo === "parcelado") {
+      linhaParcelas.style.display = "grid";
+      grpVenc.style.display = "block";
+    } else if (tipo === "emprestimo") {
+      linhaParcelas.style.display = "grid";
+      grpTotal.style.display = "block";
+      grpVenc.style.display = "block";
+      lblValor.innerText = "Valor da Parcela ou Total a Pagar (R$) *";
+      document.getElementById("inp-categoria").value = "Empréstimo / Financiamento";
+    } else if (tipo === "transferencia") {
+      grpDestino.style.display = "block";
+      lblValor.innerText = "Valor Transferido (R$) *";
+    } else if (tipo === "receber") {
+      linhaParcelas.style.display = "grid";
+      grpVenc.style.display = "block";
+      lblValor.innerText = "Valor a Receber (R$) *";
+    }
+
+    atualizarCoerencia();
+    document.getElementById("inp-valor").focus();
+  }
+
+  function atualizarCoerencia() {
+    const box = document.getElementById("box-coerencia");
+    const val = parseFloat(document.getElementById("inp-valor").value) || 0;
+    const qtd = Math.max(1, parseInt(document.getElementById("inp-qtd-parcelas").value) || 1);
+    const modo = document.getElementById("inp-modo-parcela").value;
+    const conta = document.getElementById("inp-conta").value;
+
+    const vParc = modo === "TOTAL" ? (val / qtd) : val;
+    const vTot = modo === "TOTAL" ? val : (val * qtd);
+
+    if (tipoAtual === "despesa") {
+      box.innerHTML = `💸 <b>Saída Real (${conta}):</b> Abate <b>${moeda(val)}</b> imediatamente do saldo disponível.`;
+    } else if (tipoAtual === "receita") {
+      box.innerHTML = `💰 <b>Entrada Real (${conta}):</b> Soma <b>${moeda(val)}</b> ao saldo da conta e às receitas próprias.`;
+    } else if (tipoAtual === "parcelado") {
+      box.innerHTML = `💳 <b>Passivo Programado:</b> Não mexe no saldo hoje. Cria <b>${qtd}x de ${moeda(vParc)}</b> (Total: ${moeda(vTot)}) em A Pagar com alerta no visor.`;
+    } else if (tipoAtual === "emprestimo") {
+      const vLiq = parseFloat(document.getElementById("inp-valor-liquido-emp").value) || 0;
+      box.innerHTML =
+        `🏦 <b>Partida Dobrada de Empréstimo:</b><br>` +
+        `• Entra <b>+ ${moeda(vLiq)}</b> hoje na conta <b>${conta}</b> (sem contar como receita de trabalho).<br>` +
+        `• Nasce um passivo de <b>${moeda(vTot)}</b> (${qtd}x de ${moeda(vParc)}) em A Pagar.`;
+    } else if (tipoAtual === "transferencia") {
+      const dest = document.getElementById("inp-conta-destino").value;
+      box.innerHTML = `🔄 <b>Transferência Neutra:</b> Sai <b>${moeda(val)}</b> de <b>${conta}</b> e entra em <b>${dest}</b> (não altera seu patrimônio nem despesas).`;
+    } else if (tipoAtual === "receber") {
+      box.innerHTML = `📥 <b>Recebível Futuro:</b> Não soma ao caixa hoje. Agenda <b>${qtd}x de ${moeda(vParc)}</b> (Total: ${moeda(vTot)}) para confirmar entrada na data combinada.`;
     }
   }
 
-  async function registrarLancamento() {
-    const descricao = document.getElementById("descricao").value.trim();
-    const categoria = document.getElementById("categoria").value;
-    const valorDigitado = parseFloat(document.getElementById("valor").value) || 0;
-    const dataBase = document.getElementById("dataVencimento").value;
+  async function salvarLancamentoSmart() {
+    const descricao = document.getElementById("inp-descricao").value.trim();
+    const val = parseFloat(document.getElementById("inp-valor").value) || 0;
+    const conta = document.getElementById("inp-conta").value;
+    const entidade = document.getElementById("inp-entidade").value;
+    const categoria = document.getElementById("inp-categoria").value;
+    const dataLancISO = document.getElementById("inp-data-lanc").value || new Date().toISOString().split("T")[0];
+    const dataVencISO = document.getElementById("inp-vencimento").value || dataLancISO;
 
-    if (!descricao || valorDigitado <= 0 || !dataBase) {
-      alert("Preencha a descrição, um valor maior que zero e a data.");
+    if (!descricao || val <= 0) {
+      alert("Preencha a descrição e um valor maior que zero.");
       return;
     }
 
     const novosItens = [];
     const grupoId = "GRP-" + Date.now();
+    const dataLancBr = dataLancISO.split("-").reverse().join("/");
+    const metaForma = `${conta} | ${entidade}`;
 
-    if (tipoAtual === "DESPESA" || tipoAtual === "RECEITA") {
+    if (tipoAtual === "despesa" || tipoAtual === "receita") {
       novosItens.push({
         id: "LNC-" + Date.now(),
-        dataLancamento: new Date().toLocaleDateString("pt-BR"),
-        vencimento: dataBase,
-        dataPagamento: new Date().toLocaleDateString("pt-BR"),
-        tipo: tipoAtual,
+        dataLancamento: dataLancBr,
+        vencimento: dataLancISO,
+        dataPagamento: dataLancBr,
+        tipo: tipoAtual === "receita" ? "RECEITA" : "DESPESA",
         categoria: categoria,
         descricao: descricao,
-        valor: valorDigitado,
+        valor: val,
         status: "PAGO",
         grupoId: grupoId,
         parcelaAtual: 1,
         totalParcelas: 1,
-        forma: tipoAtual === "RECEITA" ? "Entrada Direta" : "Pagamento à Vista"
+        forma: metaForma
       });
-    } else {
-      const qtd = Math.max(1, parseInt(document.getElementById("qtdParcelas").value) || 1);
-      const modo = document.getElementById("modoValorParcela").value;
-      const valorParcela = modo === "TOTAL" ? Number((valorDigitado / qtd).toFixed(2)) : valorDigitado;
 
-      const [ano, mes, dia] = dataBase.split("-").map(Number);
+    } else if (tipoAtual === "transferencia") {
+      const contaDest = document.getElementById("inp-conta-destino").value;
+      if (conta === contaDest) {
+        alert("Escolha uma conta de destino diferente da conta de origem.");
+        return;
+      }
+
+      novosItens.push({
+        id: "TRF-OUT-" + Date.now(),
+        dataLancamento: dataLancBr,
+        vencimento: dataLancISO,
+        dataPagamento: dataLancBr,
+        tipo: "TRANSF_SAIDA",
+        categoria: "Transferência",
+        descricao: `Transf. para ${contaDest}: ${descricao}`,
+        valor: val,
+        status: "PAGO",
+        grupoId: grupoId,
+        parcelaAtual: 1,
+        totalParcelas: 1,
+        forma: `${conta} | ${entidade}`
+      });
+
+      novosItens.push({
+        id: "TRF-IN-" + Date.now(),
+        dataLancamento: dataLancBr,
+        vencimento: dataLancISO,
+        dataPagamento: dataLancBr,
+        tipo: "TRANSF_ENTRADA",
+        categoria: "Transferência",
+        descricao: `Transf. de ${conta}: ${descricao}`,
+        valor: val,
+        status: "PAGO",
+        grupoId: grupoId,
+        parcelaAtual: 1,
+        totalParcelas: 1,
+        forma: `${contaDest} | ${entidade}`
+      });
+
+    } else if (tipoAtual === "parcelado" || tipoAtual === "receber") {
+      const qtd = Math.max(1, parseInt(document.getElementById("inp-qtd-parcelas").value) || 1);
+      const modo = document.getElementById("inp-modo-parcela").value;
+      const vParc = modo === "TOTAL" ? Number((val / qtd).toFixed(2)) : val;
+      const [ano, mes, dia] = dataVencISO.split("-").map(Number);
 
       for (let i = 0; i < qtd; i++) {
-        const dtVenc = new Date(ano, (mes - 1) + i, dia);
-        const isoVenc = dtVenc.toISOString().split("T")[0];
-
+        const dtV = new Date(ano, (mes - 1) + i, dia);
+        const isoV = dtV.toISOString().split("T")[0];
         novosItens.push({
-          id: "PARC-" + Date.now() + "-" + (i + 1),
-          dataLancamento: new Date().toLocaleDateString("pt-BR"),
-          vencimento: isoVenc,
+          id: (tipoAtual === "receber" ? "REC-" : "PARC-") + Date.now() + "-" + (i + 1),
+          dataLancamento: dataLancBr,
+          vencimento: isoV,
           dataPagamento: "",
-          tipo: tipoAtual,
+          tipo: tipoAtual === "receber" ? "A_RECEBER" : "PARCELADO",
           categoria: categoria,
           descricao: `${descricao} (${i + 1}/${qtd})`,
-          valor: valorParcela,
+          valor: vParc,
           status: "PENDENTE",
           grupoId: grupoId,
           parcelaAtual: i + 1,
           totalParcelas: qtd,
-          forma: tipoAtual === "EMPRESTIMO" ? "Parcela Empréstimo" : "Cartão / Boleto"
+          forma: metaForma
+        });
+      }
+
+    } else if (tipoAtual === "emprestimo") {
+      const vLiquido = parseFloat(document.getElementById("inp-valor-liquido-emp").value) || 0;
+      if (vLiquido <= 0) {
+        alert("Informe o valor líquido do empréstimo que entrou na sua conta hoje.");
+        return;
+      }
+
+      const qtd = Math.max(1, parseInt(document.getElementById("inp-qtd-parcelas").value) || 1);
+      const modo = document.getElementById("inp-modo-parcela").value;
+      const vParc = modo === "TOTAL" ? Number((val / qtd).toFixed(2)) : val;
+
+      // 1. Entrada líquida no caixa
+      novosItens.push({
+        id: "EMP-ENT-" + Date.now(),
+        dataLancamento: dataLancBr,
+        vencimento: dataLancISO,
+        dataPagamento: dataLancBr,
+        tipo: "CREDITO_EMPRESTIMO",
+        categoria: categoria,
+        descricao: `Crédito Empréstimo: ${descricao}`,
+        valor: vLiquido,
+        status: "PAGO",
+        grupoId: grupoId,
+        parcelaAtual: 0,
+        totalParcelas: qtd,
+        forma: metaForma
+      });
+
+      // 2. Criação imediata do passivo em parcelas
+      const [ano, mes, dia] = dataVencISO.split("-").map(Number);
+      for (let i = 0; i < qtd; i++) {
+        const dtV = new Date(ano, (mes - 1) + i, dia);
+        const isoV = dtV.toISOString().split("T")[0];
+        novosItens.push({
+          id: "EMP-PARC-" + Date.now() + "-" + (i + 1),
+          dataLancamento: dataLancBr,
+          vencimento: isoV,
+          dataPagamento: "",
+          tipo: "EMPRESTIMO",
+          categoria: categoria,
+          descricao: `${descricao} (${i + 1}/${qtd})`,
+          valor: vParc,
+          status: "PENDENTE",
+          grupoId: grupoId,
+          parcelaAtual: i + 1,
+          totalParcelas: qtd,
+          forma: metaForma
         });
       }
     }
@@ -585,19 +838,20 @@
     agendarNotificacoesNativas();
     enviarParaPlanilha({ acao: "salvarLote", itens: novosItens });
 
-    document.getElementById("descricao").value = "";
-    document.getElementById("valor").value = "";
+    document.getElementById("inp-descricao").value = "";
+    document.getElementById("inp-valor").value = "";
+    document.getElementById("inp-valor-liquido-emp").value = "";
+    document.getElementById("badge-auto-cat").innerText = "";
     renderizarTudo();
-    alert(novosItens.length > 1
-      ? `${novosItens.length} parcelas programadas com notificação agendada no visor!`
-      : "Lançamento salvo e sincronizado!");
+    alert("Lançamento registrado com sucesso!");
   }
 
   function darBaixaParcela(id) {
     const hojeStr = new Date().toLocaleDateString("pt-BR");
     registros = registros.map(r => {
       if (r.id === id) {
-        return { ...r, status: "PAGO", dataPagamento: hojeStr };
+        const novoTipo = r.tipo === "A_RECEBER" ? "RECEITA" : r.tipo;
+        return { ...r, tipo: novoTipo, status: "PAGO", dataPagamento: hojeStr };
       }
       return r;
     });
@@ -617,29 +871,40 @@
     renderizarTudo();
   }
 
+  function extrairConta_(formaStr) {
+    if (!formaStr) return "Conta Principal";
+    return String(formaStr).split("|")[0].trim() || "Conta Principal";
+  }
+
   function renderizarTudo() {
-    let entradasReais = 0;
+    let entradasCaixaTotais = 0;
+    let receitasProprias = 0;
     let saidasReais = 0;
-    let totalPendente = 0;
+    let passivoTotal = 0;
     let qtdPendentes = 0;
 
     const hojeISO = new Date().toISOString().split("T")[0];
     let htmlPendentes = "";
     let htmlExtrato = "";
     const gruposEmprestimos = {};
+    const saldosPorConta = {};
 
     registros.forEach(r => {
       const val = Number(r.valor) || 0;
+      const contaNome = extrairConta_(r.forma);
+      if (saldosPorConta[contaNome] === undefined) saldosPorConta[contaNome] = 0;
 
       if (r.status === "PAGO") {
         if (r.tipo === "RECEITA") {
-          entradasReais += val;
+          entradasCaixaTotais += val;
+          receitasProprias += val;
+          saldosPorConta[contaNome] += val;
           htmlExtrato += `
             <div class="item-lista pago-receita">
               <div>
                 <div style="font-weight:700; font-size:14px;">${escapar(r.descricao)}</div>
                 <div style="font-size:12px; color:var(--muted); margin-top:3px;">
-                  💰 Entrada Confirmada • ${escapar(r.categoria)} • Pago em ${r.dataPagamento || r.vencimento}
+                  💰 Receita • ${escapar(r.forma || r.categoria)} • ${r.dataPagamento || r.vencimento}
                 </div>
               </div>
               <div style="display:flex; align-items:center; gap:10px;">
@@ -647,14 +912,61 @@
                 <button class="btn-excluir" onclick="excluirRegistro('${r.id}')">✕</button>
               </div>
             </div>`;
+        } else if (r.tipo === "CREDITO_EMPRESTIMO") {
+          entradasCaixaTotais += val;
+          saldosPorConta[contaNome] += val;
+          htmlExtrato += `
+            <div class="item-lista pago-credito">
+              <div>
+                <div style="font-weight:700; font-size:14px;">${escapar(r.descricao)}</div>
+                <div style="font-size:12px; color:#d8b4fe; margin-top:3px;">
+                  🏦 Crédito de Empréstimo • ${escapar(r.forma)} • ${r.dataPagamento || r.vencimento}
+                </div>
+              </div>
+              <div style="display:flex; align-items:center; gap:10px;">
+                <b style="color:#c084fc; font-size:15px;">+ ${moeda(val)}</b>
+                <button class="btn-excluir" onclick="excluirRegistro('${r.id}')">✕</button>
+              </div>
+            </div>`;
+        } else if (r.tipo === "TRANSF_ENTRADA") {
+          saldosPorConta[contaNome] += val;
+          htmlExtrato += `
+            <div class="item-lista pago-transf">
+              <div>
+                <div style="font-weight:700; font-size:14px;">${escapar(r.descricao)}</div>
+                <div style="font-size:12px; color:#7dd3fc; margin-top:3px;">
+                  🔄 Transferência Recebida • ${escapar(r.forma)} • ${r.dataPagamento || r.vencimento}
+                </div>
+              </div>
+              <div style="display:flex; align-items:center; gap:10px;">
+                <b style="color:var(--blue); font-size:15px;">+ ${moeda(val)}</b>
+                <button class="btn-excluir" onclick="excluirRegistro('${r.id}')">✕</button>
+              </div>
+            </div>`;
+        } else if (r.tipo === "TRANSF_SAIDA") {
+          saldosPorConta[contaNome] -= val;
+          htmlExtrato += `
+            <div class="item-lista pago-transf">
+              <div>
+                <div style="font-weight:700; font-size:14px;">${escapar(r.descricao)}</div>
+                <div style="font-size:12px; color:#7dd3fc; margin-top:3px;">
+                  🔄 Transferência Enviada • ${escapar(r.forma)} • ${r.dataPagamento || r.vencimento}
+                </div>
+              </div>
+              <div style="display:flex; align-items:center; gap:10px;">
+                <b style="color:var(--blue); font-size:15px;">- ${moeda(val)}</b>
+                <button class="btn-excluir" onclick="excluirRegistro('${r.id}')">✕</button>
+              </div>
+            </div>`;
         } else {
           saidasReais += val;
+          saldosPorConta[contaNome] -= val;
           htmlExtrato += `
             <div class="item-lista pago-despesa">
               <div>
                 <div style="font-weight:700; font-size:14px;">${escapar(r.descricao)}</div>
                 <div style="font-size:12px; color:var(--muted); margin-top:3px;">
-                  💸 Saída Real Efetivada • ${escapar(r.categoria)} • Pago em ${r.dataPagamento || r.vencimento}
+                  💸 Saída Real • ${escapar(r.forma || r.categoria)} • Pago em ${r.dataPagamento || r.vencimento}
                 </div>
               </div>
               <div style="display:flex; align-items:center; gap:10px;">
@@ -664,10 +976,10 @@
             </div>`;
         }
       } else {
-        totalPendente += val;
+        const ehReceber = r.tipo === "A_RECEBER";
+        if (!ehReceber) passivoTotal += val;
         qtdPendentes++;
         const atrasado = r.vencimento < hojeISO;
-        const venceHoje = r.vencimento === hojeISO;
         const dataBr = r.vencimento.split("-").reverse().join("/");
 
         htmlPendentes += `
@@ -675,44 +987,47 @@
             <div>
               <div style="font-weight:700; font-size:14px;">${escapar(r.descricao)}</div>
               <div style="font-size:12px; color:${atrasado ? '#fca5a5' : 'var(--muted)'}; margin-top:3px;">
-                ${r.tipo === 'EMPRESTIMO' ? '🏦 Empréstimo' : '💳 Boleto/Cartão'} • Vence em <b>${dataBr}</b>
-                ${atrasado ? ' (ATRASADO)' : (venceHoje ? ' (VENCE HOJE)' : '')}
+                ${ehReceber ? '📥 A Receber' : (r.tipo === 'EMPRESTIMO' ? '🏦 Passivo Empréstimo' : '💳 Passivo Parcela')} • Vence em <b>${dataBr}</b> • ${escapar(r.forma)}
               </div>
             </div>
             <div style="display:flex; align-items:center; gap:8px;">
-              <b style="color:var(--amber); font-size:15px;">${moeda(val)}</b>
-              <button class="btn-baixar" onclick="darBaixaParcela('${r.id}')">✓ Pagar</button>
+              <b style="color:${ehReceber ? '#5eead4' : 'var(--amber)'}; font-size:15px;">${moeda(val)}</b>
+              <button class="btn-baixar" onclick="darBaixaParcela('${r.id}')">${ehReceber ? '✓ Receber' : '✓ Pagar'}</button>
               <button class="btn-excluir" onclick="excluirRegistro('${r.id}')">✕</button>
             </div>
           </div>`;
       }
 
-      // Agrupa contratos de empréstimo
-      if (r.tipo === "EMPRESTIMO") {
+      if (r.tipo === "EMPRESTIMO" || r.tipo === "CREDITO_EMPRESTIMO") {
         const g = r.grupoId || r.descricao;
         if (!gruposEmprestimos[g]) {
           gruposEmprestimos[g] = {
-            nome: r.descricao.replace(/\s*\(\d+\/\d+\)$/, ""),
+            nome: r.descricao.replace(/^Crédito Empréstimo:\s*/, "").replace(/\s*\(\d+\/\d+\)$/, ""),
+            creditoRecebido: 0,
             totalContrato: 0,
             totalPago: 0,
             pagas: 0,
             totalParcelas: r.totalParcelas || 1
           };
         }
-        gruposEmprestimos[g].totalContrato += val;
-        if (r.status === "PAGO") {
-          gruposEmprestimos[g].totalPago += val;
-          gruposEmprestimos[g].pagas += 1;
+        if (r.tipo === "CREDITO_EMPRESTIMO") {
+          gruposEmprestimos[g].creditoRecebido += val;
+        } else {
+          gruposEmprestimos[g].totalContrato += val;
+          if (r.status === "PAGO") {
+            gruposEmprestimos[g].totalPago += val;
+            gruposEmprestimos[g].pagas += 1;
+          }
         }
       }
     });
 
-    const saldoReal = entradasReais - saidasReais;
+    const saldoReal = entradasCaixaTotais - saidasReais;
     document.getElementById("kpi-saldo").innerText = moeda(saldoReal);
     document.getElementById("kpi-saldo").style.color = saldoReal >= 0 ? "var(--blue)" : "var(--red)";
-    document.getElementById("kpi-entradas").innerText = moeda(entradasReais);
+    document.getElementById("kpi-entradas").innerText = moeda(receitasProprias);
     document.getElementById("kpi-saidas").innerText = moeda(saidasReais);
-    document.getElementById("kpi-pendente").innerText = moeda(totalPendente);
+    document.getElementById("kpi-pendente").innerText = moeda(passivoTotal);
 
     const badge = document.getElementById("contador-pagar");
     if (qtdPendentes > 0) {
@@ -723,10 +1038,21 @@
     }
 
     document.getElementById("lista-pendentes").innerHTML =
-      htmlPendentes || "<p style='color:var(--muted); font-size:13px; text-align:center; padding:16px;'>Nenhum boleto ou parcela pendente.</p>";
+      htmlPendentes || "<p style='color:var(--muted); font-size:13px; text-align:center; padding:16px;'>Nenhuma conta pendente.</p>";
 
     document.getElementById("lista-extrato").innerHTML =
-      htmlExtrato || "<p style='color:var(--muted); font-size:13px; text-align:center; padding:16px;'>Nenhuma entrada ou saída efetivada ainda.</p>";
+      htmlExtrato || "<p style='color:var(--muted); font-size:13px; text-align:center; padding:16px;'>Nenhuma movimentação efetivada.</p>";
+
+    let htmlContas = "";
+    Object.entries(saldosPorConta).forEach(([nomeC, saldoC]) => {
+      htmlContas += `
+        <div class="item-lista">
+          <div style="font-weight:700; font-size:14px;">🏦 ${escapar(nomeC)}</div>
+          <b style="color:${saldoC >= 0 ? 'var(--blue)' : 'var(--red)'}; font-size:16px;">${moeda(saldoC)}</b>
+        </div>`;
+    });
+    document.getElementById("lista-saldos-contas").innerHTML =
+      htmlContas || "<p style='color:var(--muted); font-size:13px; text-align:center; padding:16px;'>Sem movimentação por conta ainda.</p>";
 
     let htmlEmp = "";
     Object.values(gruposEmprestimos).forEach(emp => {
@@ -738,33 +1064,30 @@
             <span>🏦 ${escapar(emp.nome)}</span>
             <span style="color:#c084fc;">${emp.pagas}/${emp.totalParcelas} pagas (${pct}%)</span>
           </div>
+          <div style="font-size:11px; color:var(--muted); margin-top:4px;">
+            Crédito que entrou: <b style="color:var(--blue);">${moeda(emp.creditoRecebido)}</b> • Total a devolver: <b>${moeda(emp.totalContrato)}</b>
+          </div>
           <div class="barra-progresso"><div class="barra-fill" style="width:${pct}%;"></div></div>
           <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--muted); margin-top:6px;">
-            <span>Já Amortizado: <b style="color:var(--green);">${moeda(emp.totalPago)}</b></span>
-            <span>Saldo Devedor: <b style="color:var(--amber);">${moeda(faltaPagar)}</b></span>
+            <span>Amortizado: <b style="color:var(--green);">${moeda(emp.totalPago)}</b></span>
+            <span>Passivo Restante: <b style="color:var(--amber);">${moeda(faltaPagar)}</b></span>
           </div>
         </div>`;
     });
-
     document.getElementById("lista-emprestimos").innerHTML =
-      htmlEmp || "<p style='color:var(--muted); font-size:13px; text-align:center; padding:16px;'>Nenhum empréstimo cadastrado.</p>";
+      htmlEmp || "<p style='color:var(--muted); font-size:13px; text-align:center; padding:16px;'>Nenhum empréstimo registrado.</p>";
   }
 
-  /* ============================================================
-     NOTIFICAÇÕES NO VISOR DO CELULAR SEM DEPENDER DE ABRIR O APP
-     ============================================================ */
   async function ativarNotificacoesVisor() {
-    // 1. Android APK Nativo (Capacitor LocalNotifications)
     if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications) {
       const perm = await window.Capacitor.Plugins.LocalNotifications.requestPermissions();
       if (perm.display === "granted") {
         await agendarNotificacoesNativas();
-        alert("Notificações nativas ativadas! Os alertas aparecerão no visor do celular às 08:00 no dia de cada vencimento.");
+        alert("Notificações nativas ativadas! Os alertas aparecerão no visor às 08:00 no dia de cada vencimento.");
       }
       return;
     }
 
-    // 2. Navegador PC / Mobile
     if ("Notification" in window) {
       const res = await Notification.requestPermission();
       if (res === "granted") {
@@ -790,12 +1113,12 @@
     }
 
     const LocalNotifications = window.Capacitor.Plugins.LocalNotifications;
-    const pendentes = registros.filter(r => r.status === "PENDENTE" && r.vencimento);
+    const pendentes = registros.filter(r => r.status === "PENDENTE" && r.vencimento && r.tipo !== "A_RECEBER");
     const notificacoes = [];
 
     pendentes.forEach(p => {
       const [ano, mes, dia] = p.vencimento.split("-").map(Number);
-      const dataAlarme = new Date(ano, mes - 1, dia, 8, 0, 0); // 08:00 da manhã no dia do vencimento
+      const dataAlarme = new Date(ano, mes - 1, dia, 8, 0, 0);
       if (dataAlarme > new Date()) {
         notificacoes.push({
           id: gerarIdNumerico_(p.id),
@@ -824,17 +1147,14 @@
   function verificarAlertasNavegador() {
     if (!("Notification" in window) || Notification.permission !== "granted") return;
     const hojeISO = new Date().toISOString().split("T")[0];
-    const vencendo = registros.filter(r => r.status === "PENDENTE" && r.vencimento <= hojeISO);
+    const vencendo = registros.filter(r => r.status === "PENDENTE" && r.tipo !== "A_RECEBER" && r.vencimento <= hojeISO);
     if (vencendo.length > 0) {
-      new Notification(`⚠️ ${vencendo.length} conta(s) pendente(s) para pagamento`, {
+      new Notification(`⚠️ ${vencendo.length} passivo(s) aguardando pagamento`, {
         body: `${vencendo[0].descricao} (${moeda(vencendo[0].valor)}) aguardando baixa.`
       });
     }
   }
 
-  /* ============================================================
-     SINCRONIZAÇÃO SEGURA COM GOOGLE SHEETS (SEM PERDA DE DADOS)
-     ============================================================ */
   function salvarLocal() {
     localStorage.setItem("fin_real_registros", JSON.stringify(registros));
   }
