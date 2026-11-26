@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <meta name="theme-color" content="#0b1120">
   <link rel="manifest" href="manifest.json">
-  <title>Finanças 360º Smart — Caixa, Contas & Passivos</title>
+  <title>Finanças 360º — Contabilidade Pessoal & Caixa</title>
   <style>
     :root {
       --bg: #0b1120;
@@ -27,29 +27,29 @@
       background: var(--bg);
       color: var(--text);
       min-height: 100dvh;
-      padding-bottom: calc(82px + env(safe-area-inset-bottom, 0px));
+      padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px));
     }
 
     .topbar {
       background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-      padding: calc(16px + env(safe-area-inset-top, 0px)) 20px 18px 20px;
+      padding: calc(14px + env(safe-area-inset-top, 0px)) 16px 16px 16px;
       border-bottom: 1px solid var(--border);
     }
 
     .topbar-inner {
-      max-width: 960px;
+      max-width: 1020px;
       margin: 0 auto;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       flex-wrap: wrap;
     }
 
-    .topbar h1 { font-size: 19px; font-weight: 800; letter-spacing: 0.2px; }
-    .topbar p { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .topbar h1 { font-size: 18px; font-weight: 800; }
+    .topbar p { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
 
-    .status-pills { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .status-pills { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
 
     .pill {
       font-size: 11px;
@@ -57,7 +57,7 @@
       padding: 5px 10px;
       border-radius: 999px;
       border: 1px solid var(--border);
-      background: rgba(15, 23, 42, 0.7);
+      background: rgba(15, 23, 42, 0.8);
       cursor: pointer;
     }
 
@@ -65,19 +65,20 @@
     .pill-notif { color: var(--blue); border-color: rgba(56, 189, 248, 0.35); }
 
     .wrapper {
-      max-width: 960px;
-      margin: 18px auto;
-      padding: 0 14px;
+      max-width: 1020px;
+      margin: 16px auto;
+      padding: 0 12px;
     }
 
+    /* KPIs DO BALANÇO PATRIMONIAL */
     .resumo-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 10px;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
     }
 
-    @media (max-width: 760px) {
+    @media (max-width: 780px) {
       .resumo-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
 
@@ -85,17 +86,18 @@
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 14px;
-      padding: 14px;
+      padding: 13px;
     }
 
-    .kpi-label { font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; }
-    .kpi-val { font-size: clamp(17px, 4vw, 21px); font-weight: 800; margin-top: 6px; }
-    .kpi-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
+    .kpi-label { font-size: 10.5px; color: var(--muted); font-weight: 700; text-transform: uppercase; }
+    .kpi-val { font-size: clamp(16px, 4vw, 20px); font-weight: 800; margin-top: 5px; }
+    .kpi-sub { font-size: 10.5px; color: var(--muted); margin-top: 4px; }
 
+    /* ABAS */
     .nav-tabs {
       display: flex;
       gap: 6px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       background: var(--card);
       padding: 6px;
       border-radius: 12px;
@@ -105,13 +107,13 @@
 
     .tab-btn {
       flex: 1;
-      min-width: 95px;
-      padding: 10px 8px;
+      min-width: 92px;
+      padding: 10px 6px;
       border: none;
       border-radius: 8px;
       background: transparent;
       color: var(--muted);
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 700;
       cursor: pointer;
       white-space: nowrap;
@@ -129,7 +131,7 @@
       font-size: 10px;
       padding: 1px 6px;
       border-radius: 999px;
-      margin-left: 4px;
+      margin-left: 3px;
     }
 
     .secao { display: none; }
@@ -139,58 +141,56 @@
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 16px;
-      padding: 18px;
+      padding: 16px;
       margin-bottom: 14px;
     }
 
     .card-header {
-      font-size: 14px;
+      font-size: 13.5px;
       font-weight: 700;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       padding-bottom: 10px;
       border-bottom: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 8px;
+      flex-wrap: wrap;
     }
 
-    /* SELETOR RÁPIDO DE TIPOS */
     .tipo-grid {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 8px;
-      margin-bottom: 10px;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 6px;
+      margin-bottom: 12px;
     }
 
-    @media (max-width: 600px) {
+    @media (max-width: 720px) {
       .tipo-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
 
     .tipo-opt {
-      padding: 12px 8px;
+      padding: 11px 6px;
       border-radius: 10px;
       border: 1.5px solid var(--border);
       background: var(--input);
       color: var(--muted);
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 700;
       cursor: pointer;
       text-align: center;
-      transition: 0.15s;
     }
 
-    .tipo-opt.sel-despesa { border-color: var(--red); color: #f87171; background: rgba(239, 68, 68, 0.12); }
-    .tipo-opt.sel-receita { border-color: var(--green); color: #34d399; background: rgba(16, 185, 129, 0.12); }
-    .tipo-opt.sel-parcelado { border-color: var(--amber); color: #fbbf24; background: rgba(245, 158, 11, 0.12); }
-    .tipo-opt.sel-emprestimo { border-color: var(--purple); color: #c084fc; background: rgba(168, 85, 247, 0.12); }
-    .tipo-opt.sel-transferencia { border-color: var(--blue); color: #38bdf8; background: rgba(56, 189, 248, 0.12); }
-    .tipo-opt.sel-receber { border-color: #2dd4bf; color: #5eead4; background: rgba(45, 212, 191, 0.12); }
+    .tipo-opt.sel-despesa { border-color: var(--red); color: #f87171; background: rgba(239, 68, 68, 0.1); }
+    .tipo-opt.sel-receita { border-color: var(--green); color: #34d399; background: rgba(16, 185, 129, 0.1); }
+    .tipo-opt.sel-transferencia { border-color: var(--blue); color: #7dd3fc; background: rgba(56, 189, 248, 0.1); }
+    .tipo-opt.sel-parcelado { border-color: var(--amber); color: #fbbf24; background: rgba(245, 158, 11, 0.1); }
+    .tipo-opt.sel-emprestimo { border-color: var(--purple); color: #c084fc; background: rgba(168, 85, 247, 0.1); }
 
     .form-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
+      gap: 10px;
     }
 
     @media (max-width: 600px) {
@@ -199,60 +199,39 @@
 
     label {
       display: block;
-      font-size: 12px;
+      font-size: 11.5px;
       color: var(--muted);
       font-weight: 600;
-      margin: 12px 0 5px 0;
+      margin: 10px 0 4px 0;
     }
 
     input, select {
       width: 100%;
-      padding: 12px;
+      padding: 11px;
       border-radius: 10px;
       border: 1.5px solid var(--border);
       background: var(--input);
       color: var(--text);
-      font-size: 15px;
+      font-size: 14.5px;
     }
 
     input:focus, select:focus { outline: none; border-color: var(--blue); }
 
-    .barra-atalho-gaveta {
-      margin-top: 12px;
-      padding: 10px 12px;
-      background: rgba(15, 23, 42, 0.8);
-      border: 1px dashed var(--border);
-      border-radius: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      cursor: pointer;
-      font-size: 12px;
-    }
-
-    .gaveta-box {
-      margin-top: 8px;
-      padding: 12px;
-      background: rgba(9, 14, 26, 0.65);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-    }
-
     .box-coerencia {
-      margin-top: 14px;
-      padding: 12px 14px;
+      margin-top: 12px;
+      padding: 11px 13px;
       border-radius: 10px;
       background: rgba(56, 189, 248, 0.08);
       border: 1px solid rgba(56, 189, 248, 0.25);
       font-size: 12px;
       color: #bae6fd;
-      line-height: 1.55;
+      line-height: 1.5;
     }
 
     .btn-submit {
       width: 100%;
-      margin-top: 16px;
-      padding: 14px;
+      margin-top: 14px;
+      padding: 13px;
       border: none;
       border-radius: 12px;
       background: linear-gradient(135deg, #0284c7, #38bdf8);
@@ -267,41 +246,48 @@
       border: 1px solid var(--border);
       border-left: 4px solid var(--blue);
       border-radius: 12px;
-      padding: 14px;
-      margin-bottom: 10px;
+      padding: 12px 14px;
+      margin-bottom: 9px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       flex-wrap: wrap;
     }
 
     .item-lista.pago-receita { border-left-color: var(--green); }
-    .item-lista.pago-credito { border-left-color: var(--purple); }
     .item-lista.pago-despesa { border-left-color: var(--red); }
     .item-lista.pago-transf { border-left-color: var(--blue); }
     .item-lista.vencido { border-left-color: var(--red); background: rgba(239, 68, 68, 0.06); }
     .item-lista.pendente { border-left-color: var(--amber); }
 
     .btn-baixar {
-      padding: 8px 14px;
+      padding: 7px 12px;
       border-radius: 8px;
       border: none;
       background: var(--green);
       color: #052e16;
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 800;
       cursor: pointer;
     }
 
     .btn-excluir {
-      padding: 8px 10px;
+      padding: 7px 9px;
       border-radius: 8px;
       border: 1px solid rgba(239, 68, 68, 0.3);
       background: transparent;
       color: #f87171;
-      font-size: 12px;
+      font-size: 11.5px;
       cursor: pointer;
+    }
+
+    .dre-linha {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
     }
 
     .barra-progresso {
@@ -313,10 +299,7 @@
       margin: 8px 0;
     }
 
-    .barra-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #a855f7, #10b981);
-    }
+    .barra-fill { height: 100%; background: linear-gradient(90deg, #a855f7, #10b981); }
   </style>
 </head>
 <body>
@@ -324,213 +307,264 @@
   <div class="topbar">
     <div class="topbar-inner">
       <div>
-        <h1>Finanças 360º Smart</h1>
-        <p>Auto-classificação inteligente, múltiplas contas e partida dobrada real</p>
+        <h1>Finanças 360º — Contabilidade Real</h1>
+        <p>Espelho bidirecional com Google Sheets • Caixa, Competência, Balanço e DRE</p>
       </div>
       <div class="status-pills">
-        <button class="pill pill-notif" onclick="ativarNotificacoesVisor()">🔔 Ativar Alertas no Visor</button>
-        <div id="badge-sync" class="pill pill-online" onclick="sincronizarComPlanilha()">● Nuvem Sincronizada</div>
+        <button class="pill pill-notif" onclick="ativarNotificacoesVisor()">🔔 Alertas no Visor</button>
+        <div id="badge-sync" class="pill pill-online" onclick="sincronizarComPlanilha(true)">↻ Sincronizar Planilha</div>
       </div>
     </div>
   </div>
 
   <div class="wrapper">
 
-    <!-- KPIs CONTÁBEIS REAIS -->
+    <!-- BALANÇO PATRIMONIAL RESUMIDO -->
     <div class="resumo-grid">
       <div class="kpi-card">
-        <div class="kpi-label">Saldo Real em Caixa</div>
-        <div id="kpi-saldo" class="kpi-val" style="color:var(--blue);">R$ 0,00</div>
-        <div class="kpi-sub">Soma de todas as contas hoje</div>
+        <div class="kpi-label">Ativos Totais (Contas + Inv.)</div>
+        <div id="kpi-ativos" class="kpi-val" style="color:var(--blue);">R$ 0,00</div>
+        <div class="kpi-sub">Soma real de bancos, carteira e reservas</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">Receitas Próprias</div>
-        <div id="kpi-entradas" class="kpi-val" style="color:var(--green);">R$ 0,00</div>
-        <div class="kpi-sub">Ganhos reais (exclui empréstimos)</div>
+        <div class="kpi-label">Passivos Totais (A Pagar)</div>
+        <div id="kpi-passivos" class="kpi-val" style="color:var(--amber);">R$ 0,00</div>
+        <div class="kpi-sub">Empréstimos + parcelas/boletos abertos</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">Saídas Reais (Despesas)</div>
-        <div id="kpi-saidas" class="kpi-val" style="color:var(--red);">R$ 0,00</div>
-        <div class="kpi-sub">Somente dinheiro efetivamente pago</div>
+        <div class="kpi-label">Patrimônio Líquido Real</div>
+        <div id="kpi-patrimonio" class="kpi-val" style="color:var(--green);">R$ 0,00</div>
+        <div class="kpi-sub">Ativos Totais − Passivos Totais</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">Passivo Total (A Pagar)</div>
-        <div id="kpi-pendente" class="kpi-val" style="color:var(--amber);">R$ 0,00</div>
-        <div class="kpi-sub">Parcelas de empréstimos + boletos</div>
+        <div class="kpi-label">Resultado do Mês (DRE Caixa)</div>
+        <div id="kpi-dre-mes" class="kpi-val" style="color:var(--text);">R$ 0,00</div>
+        <div id="kpi-dre-status" class="kpi-sub">Superávit / Déficit operacional</div>
       </div>
     </div>
 
-    <!-- ABAS DE NAVEGAÇÃO -->
+    <!-- ABAS DOS PRINCÍPIOS CONTÁBEIS -->
     <div class="nav-tabs">
       <button id="btn-tab-lancar" class="tab-btn ativo" onclick="abrirAba('lancar', this)">➕ Lançar</button>
       <button id="btn-tab-pagar" class="tab-btn" onclick="abrirAba('pagar', this)">
-        🔔 A Pagar / Receber <span id="contador-pagar" class="badge-count" style="display:none;">0</span>
+        🔔 Passivos <span id="contador-pagar" class="badge-count" style="display:none;">0</span>
       </button>
-      <button id="btn-tab-contas" class="tab-btn" onclick="abrirAba('contas', this)">💳 Contas & Empr.</button>
-      <button id="btn-tab-extrato" class="tab-btn" onclick="abrirAba('extrato', this)">📊 Extrato Caixa</button>
+      <button id="btn-tab-dre" class="tab-btn" onclick="abrirAba('dre', this)">📈 DRE & Prudência</button>
+      <button id="btn-tab-conciliacao" class="tab-btn" onclick="abrirAba('conciliacao', this)">🏦 Contas & Balanço</button>
+      <button id="btn-tab-extrato" class="tab-btn" onclick="abrirAba('extrato', this)">📋 Razão / Extrato</button>
     </div>
 
-    <!-- ABA 1: LANÇAMENTO INTELIGENTE -->
+    <!-- ABA 1: LANÇAMENTOS (CAIXA, COMPETÊNCIA, PARTIDAS DOBRADAS) -->
     <div id="aba-lancar" class="secao ativa">
       <div class="card">
         <div class="card-header">
-          <span>Lançamento Rápido</span>
-          <span id="badge-auto-cat" style="font-size:12px; color:var(--blue);"></span>
+          <span>Novo Fato Contábil</span>
         </div>
 
-        <!-- BOTÕES PRINCIPAIS + MAIS TIPOS -->
+        <label>Natureza da Movimentação:</label>
         <div class="tipo-grid">
-          <div class="tipo-opt sel-despesa" onclick="selecionarTipo('despesa', this)">💸 Saída Real</div>
-          <div class="tipo-opt" onclick="selecionarTipo('receita', this)">💰 Entrada Real</div>
-          <div class="tipo-opt" onclick="selecionarTipo('parcelado', this)">💳 Parcelado / Boleto</div>
-          <div class="tipo-opt" onclick="abrirMaisTipos(this)">⚙️ Mais Opções ▾</div>
-        </div>
-
-        <div id="sub-tipos-outros" class="tipo-grid" style="display:none; grid-template-columns: repeat(3, minmax(0, 1fr));">
-          <div class="tipo-opt" onclick="selecionarTipo('emprestimo', this)">🏦 Pegar Empréstimo</div>
-          <div class="tipo-opt" onclick="selecionarTipo('transferencia', this)">🔄 Transferência</div>
-          <div class="tipo-opt" onclick="selecionarTipo('receber', this)">📥 A Receber (Prazo)</div>
+          <div id="opt-DESPESA" class="tipo-opt sel-despesa" onclick="selecionarTipo('DESPESA')">💸 Despesa (À Vista)</div>
+          <div id="opt-RECEITA" class="tipo-opt" onclick="selecionarTipo('RECEITA')">💰 Receita (Entrada)</div>
+          <div id="opt-TRANSFERENCIA" class="tipo-opt" onclick="selecionarTipo('TRANSFERENCIA')">🔄 Transferência / Fatura</div>
+          <div id="opt-PARCELADO" class="tipo-opt" onclick="selecionarTipo('PARCELADO')">💳 Compra a Prazo</div>
+          <div id="opt-EMPRESTIMO" class="tipo-opt" onclick="selecionarTipo('EMPRESTIMO')">🏦 Tomar Empréstimo</div>
         </div>
 
         <div class="form-grid">
           <div>
-            <label>Descrição (auto-classifica) *</label>
-            <input type="text" id="inp-descricao" placeholder="Ex: Gasolina posto, Mercado, DAS MEI, Cliente..." oninput="detectarCategoriaAutomatica(this.value)">
+            <label>Descrição *</label>
+            <input type="text" id="descricao" placeholder="Ex: Aluguel, Supermercado, Pix Investimento, Empréstimo...">
           </div>
           <div>
-            <label id="lbl-valor-principal">Valor (R$) *</label>
-            <input type="number" id="inp-valor" step="0.01" inputmode="decimal" placeholder="0,00" oninput="atualizarCoerencia()">
-          </div>
-        </div>
-
-        <!-- LINHA DINÂMICA DE PARCELAS -->
-        <div id="linha-parcelas-rapida" class="form-grid" style="display:none;">
-          <div>
-            <label>Quantidade de Parcelas *</label>
-            <input type="number" id="inp-qtd-parcelas" min="1" max="120" value="3" oninput="atualizarCoerencia()">
-          </div>
-          <div>
-            <label>O valor acima é:</label>
-            <select id="inp-modo-parcela" onchange="atualizarCoerencia()">
-              <option value="PARCELA">Valor de CADA parcela</option>
-              <option value="TOTAL">Valor TOTAL da operação</option>
+            <label>Plano de Contas (Categoria)</label>
+            <select id="categoria">
+              <option value="Operacional / Contas">Operacional / Contas</option>
+              <option value="Alimentação & Casa">Alimentação & Casa</option>
+              <option value="Transporte & Veículo">Transporte & Veículo</option>
+              <option value="Lazer & Pessoal">Lazer & Pessoal</option>
+              <option value="Cartão de Crédito">Cartão de Crédito</option>
+              <option value="Boletos / Fornecedores">Boletos / Fornecedores</option>
+              <option value="Empréstimo / Financiamento">Empréstimo / Financiamento</option>
+              <option value="Salário / Pró-labore">Salário / Pró-labore</option>
+              <option value="Serviços / Vendas">Serviços / Vendas</option>
+              <option value="Investimentos / Reserva">Investimentos / Reserva</option>
             </select>
           </div>
         </div>
 
-        <!-- CAMPO EXCLUSIVO DE EMPRÉSTIMO (VALOR LÍQUIDO QUE ENTRA NO CAIXA) -->
-        <div id="grp-valor-total" style="display:none;">
-          <label>Valor Líquido Liberado na Conta Hoje (R$) *</label>
-          <input type="number" id="inp-valor-liquido-emp" step="0.01" inputmode="decimal" placeholder="Ex: 5000,00" oninput="atualizarCoerencia()">
-        </div>
-
-        <!-- CAMPO EXCLUSIVO DE TRANSFERÊNCIA -->
-        <div id="grp-conta-destino" style="display:none;">
-          <label>Conta de Destino *</label>
-          <select id="inp-conta-destino" onchange="atualizarCoerencia()">
-            <option value="Banco Inter">Banco Inter</option>
-            <option value="Banco do Brasil">Banco do Brasil</option>
-            <option value="Bradesco">Bradesco</option>
-            <option value="Mercado Pago">Mercado Pago</option>
-            <option value="Dinheiro / Caixa Físico">Dinheiro / Caixa Físico</option>
-          </select>
-        </div>
-
-        <!-- VENCIMENTO -->
-        <div id="grp-vencimento" style="display:none;">
-          <label>Data do 1º Vencimento *</label>
-          <input type="date" id="inp-vencimento" onchange="atualizarCoerencia()">
-        </div>
-
-        <!-- GAVETA COMPACTA DE CONTA, CATEGORIA E PERFIL -->
-        <div class="barra-atalho-gaveta" onclick="toggleDetalhesAvancados()">
-          <span style="color:var(--muted);">Conta & Perfil: <b id="resumo-padrao" style="color:var(--text);">Banco Inter • Pessoal</b></span>
-          <span style="color:var(--blue); font-weight:700;">Alterar ▾</span>
-        </div>
-
-        <div id="gaveta-avancada" class="gaveta-box" style="display:none;">
+        <!-- BLOCO PADRÃO -->
+        <div id="bloco-padrao">
           <div class="form-grid">
             <div>
-              <label>Conta / Banco</label>
-              <select id="inp-conta" onchange="atualizarResumoPadrao()">
-                <option value="Banco Inter">Banco Inter</option>
-                <option value="Banco do Brasil">Banco do Brasil</option>
-                <option value="Bradesco">Bradesco</option>
-                <option value="Mercado Pago">Mercado Pago</option>
-                <option value="Dinheiro / Caixa Físico">Dinheiro / Caixa Físico</option>
-              </select>
+              <label id="label-valor">Valor (R$) *</label>
+              <input type="number" id="valor" step="0.01" inputmode="decimal" placeholder="0,00" oninput="atualizarExplicacaoLogica()">
             </div>
             <div>
-              <label>Perfil (Pessoal / Empresa)</label>
-              <select id="inp-entidade" onchange="atualizarResumoPadrao()">
-                <option value="Pessoal">Pessoal</option>
-                <option value="Negócio/MEI">Negócio/MEI</option>
-              </select>
+              <label id="label-conta-origem">Conta Bancária / Origem *</label>
+              <select id="contaOrigem"></select>
             </div>
           </div>
 
           <div class="form-grid">
             <div>
-              <label>Categoria</label>
-              <select id="inp-categoria">
-                <option value="Alimentação">Alimentação</option>
-                <option value="Transporte">Transporte</option>
-                <option value="Moradia & Contas Fixas">Moradia & Contas Fixas</option>
-                <option value="Saúde & Educação">Saúde & Educação</option>
-                <option value="Salário / Pró-labore">Salário / Pró-labore</option>
-                <option value="Operacional MEI / Trabalho">Operacional MEI / Trabalho</option>
-                <option value="Empréstimo / Financiamento">Empréstimo / Financiamento</option>
-                <option value="Outros">Outros</option>
-              </select>
+              <label id="label-data-comp">Data de Competência (Mês do Fato) *</label>
+              <input type="date" id="dataCompetencia">
             </div>
             <div>
-              <label>Data do Lançamento</label>
-              <input type="date" id="inp-data-lanc">
+              <label id="label-data-caixa">Data do Caixa / 1º Vencimento *</label>
+              <input type="date" id="dataVencimento">
+            </div>
+          </div>
+
+          <!-- TRANSFERÊNCIA ENTRE CONTAS (PARTIDAS DOBRADAS) -->
+          <div id="box-transferencia" style="display:none;">
+            <label>Conta de Destino (Para onde o dinheiro vai) *</label>
+            <select id="contaDestino"></select>
+          </div>
+
+          <!-- CLASSIFICAÇÃO DE CUSTO / PRUDÊNCIA -->
+          <div id="box-classificacao-dre" class="form-grid">
+            <div>
+              <label>Classificação na DRE</label>
+              <select id="tipoCusto">
+                <option value="VARIAVEL">Despesa / Receita Variável</option>
+                <option value="FIXO">Despesa / Receita Fixa</option>
+              </select>
+            </div>
+            <div id="box-prudencia-receita" style="display:none;">
+              <label>Prudência Orçamentária</label>
+              <select id="segurancaReceita">
+                <option value="CERTA">Receita Confirmada / Certa</option>
+                <option value="INCERTA">Receita Incerta / Previsão (não entra no caixa até receber)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- PARCELAMENTO -->
+          <div id="box-parcelas-compra" style="display:none;">
+            <div class="form-grid">
+              <div>
+                <label>Quantidade de Parcelas *</label>
+                <input type="number" id="qtdParcelasCompra" min="1" max="120" value="3" oninput="atualizarExplicacaoLogica()">
+              </div>
+              <div>
+                <label>O valor digitado acima é:</label>
+                <select id="modoValorCompra" onchange="atualizarExplicacaoLogica()">
+                  <option value="TOTAL">Valor TOTAL da compra</option>
+                  <option value="PARCELA">Valor de CADA parcela</option>
+                </select>
+              </div>
             </div>
           </div>
         </div>
 
-        <div id="box-coerencia" class="box-coerencia">
-          💸 <b>Saída Real:</b> Abate imediatamente do saldo da conta selecionada.
+        <!-- BLOCO EMPRÉSTIMO -->
+        <div id="bloco-emprestimo" style="display:none;">
+          <div class="form-grid">
+            <div>
+              <label>1. Valor Líquido Creditado na Conta (R$) *</label>
+              <input type="number" id="valorLiquidoEmprestimo" step="0.01" inputmode="decimal" placeholder="Ex: 5000,00" oninput="atualizarExplicacaoLogica()">
+            </div>
+            <div>
+              <label>Conta onde o dinheiro entrou *</label>
+              <select id="contaCreditoEmprestimo"></select>
+            </div>
+          </div>
+          <div class="form-grid">
+            <div>
+              <label>Data do Crédito *</label>
+              <input type="date" id="dataCreditoEmprestimo">
+            </div>
+            <div>
+              <label>Vencimento da 1ª Parcela *</label>
+              <input type="date" id="dataPrimeiraParcelaEmp">
+            </div>
+          </div>
+          <div class="form-grid">
+            <div>
+              <label>2. Quantidade de Parcelas *</label>
+              <input type="number" id="qtdParcelasEmp" min="1" max="120" value="12" oninput="atualizarExplicacaoLogica()">
+            </div>
+            <div>
+              <label>3. Valor de CADA Parcela (R$) *</label>
+              <input type="number" id="valorParcelaEmp" step="0.01" inputmode="decimal" placeholder="Ex: 520,00" oninput="atualizarExplicacaoLogica()">
+            </div>
+          </div>
         </div>
 
-        <button class="btn-submit" onclick="salvarLancamentoSmart()">CONFIRMAR E SINCRONIZAR</button>
+        <div id="explicacao-logica" class="box-coerencia"></div>
+
+        <button class="btn-submit" onclick="registrarLancamento()">GRAVAR E SINCRONIZAR COM PLANILHA</button>
       </div>
     </div>
 
-    <!-- ABA 2: PASSIVOS A PAGAR & CONTAS A RECEBER -->
+    <!-- ABA 2: PASSIVOS & OBRIGAÇÕES -->
     <div id="aba-pagar" class="secao">
       <div class="card">
         <div class="card-header">
-          <span>🔔 Compromissos Futuros (Passivos & Recebíveis)</span>
+          <span>🔔 Passivos Circulantes & Parcelas em Aberto</span>
         </div>
+        <p style="font-size:12px; color:var(--muted); margin-bottom:12px;">
+          Ao dar baixa, o sistema debita a conta escolhida na data de hoje (Regime de Caixa) e abate o passivo do seu Balanço Patrimonial.
+        </p>
         <div id="lista-pendentes"></div>
       </div>
-    </div>
-
-    <!-- ABA 3: SALDO POR CONTA & EMPRÉSTIMOS -->
-    <div id="aba-contas" class="secao">
-      <div class="card">
-        <div class="card-header">
-          <span>💳 Saldo Real por Instituição / Conta</span>
-        </div>
-        <div id="lista-saldos-contas"></div>
-      </div>
 
       <div class="card">
         <div class="card-header">
-          <span>🏦 Empréstimos & Amortização</span>
+          <span>🏦 Amortização de Contratos de Empréstimo</span>
         </div>
         <div id="lista-emprestimos"></div>
       </div>
     </div>
 
-    <!-- ABA 4: EXTRATO DE CAIXA -->
+    <!-- ABA 3: DRE (CAIXA vs COMPETÊNCIA) & PRUDÊNCIA -->
+    <div id="aba-dre" class="secao">
+      <div class="card">
+        <div class="card-header">
+          <span>📈 Demonstração do Resultado (DRE Mensal)</span>
+          <div style="display:flex; gap:6px; align-items:center;">
+            <input type="month" id="filtro-mes-dre" style="padding:6px 10px; font-size:12px; width:auto;" onchange="renderizarTudo()">
+            <select id="regime-dre" style="padding:6px 10px; font-size:12px; width:auto;" onchange="renderizarTudo()">
+              <option value="CAIXA">Regime de Caixa (Pago/Recebido)</option>
+              <option value="COMPETENCIA">Regime de Competência (Mês do Fato)</option>
+            </select>
+          </div>
+        </div>
+        <div id="conteudo-dre"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span>🛡️ Princípio da Prudência (Orçamento Variável com Margem de Segurança)</span>
+        </div>
+        <p style="font-size:12px; color:var(--muted); margin-bottom:12px;">
+          Gastos variáveis são projetados com margem de segurança para cima (configurável na aba <b>Orcamento_Prudencia</b> da planilha) e receitas incertas são excluídas do caixa seguro.
+        </p>
+        <div id="conteudo-prudencia"></div>
+      </div>
+    </div>
+
+    <!-- ABA 4: BALANÇO PATRIMONIAL & CONCILIAÇÃO BANCÁRIA -->
+    <div id="aba-conciliacao" class="secao">
+      <div class="card">
+        <div class="card-header">
+          <span>⚖️ Balanço Patrimonial & Conciliação Bancária</span>
+          <button class="pill pill-online" onclick="novaContaPrompt()">+ Nova Conta / Bem</button>
+        </div>
+        <p style="font-size:12px; color:var(--muted); margin-bottom:12px;">
+          Confira se o <b>Saldo Calculado pelo Sistema</b> em cada banco bate com o <b>Saldo Real do Extrato</b>. Transferências entre contas atualizam ambos os saldos sem gerar despesa falsa.
+        </p>
+        <div id="lista-conciliacao"></div>
+      </div>
+    </div>
+
+    <!-- ABA 5: RAZÃO CONTÁBIL / EXTRATO COMPLETO -->
     <div id="aba-extrato" class="secao">
       <div class="card">
         <div class="card-header">
-          <span>📊 Extrato Efetivo do Caixa</span>
-          <button class="pill pill-online" onclick="sincronizarComPlanilha()">↻ Sincronizar</button>
+          <span>📋 Livro Razão (Sincronizado com Aba Lancamentos)</span>
+          <input type="text" id="busca-razao" placeholder="🔍 Filtrar..." style="padding:6px 10px; font-size:12px; width:180px;" oninput="renderizarTudo()">
         </div>
         <div id="lista-extrato"></div>
       </div>
@@ -541,14 +575,29 @@
 <script>
   const API_URL = "https://script.google.com/macros/s/AKfycbxDkkkLz7yJ3ugczlSVzwM3S6qHb4N6TdfeX9BSiVm_6XJlinhIuF-aPxXt3j227w5ctw/exec";
 
-  let registros = JSON.parse(localStorage.getItem("fin_real_registros") || "[]");
-  let filaPendenteSync = JSON.parse(localStorage.getItem("fin_real_fila") || "[]");
-  let tipoAtual = "despesa";
+  let state = JSON.parse(localStorage.getItem("fin360_state_v4") || "null") || {
+    lancamentos: [],
+    contas: [
+      { id: "CTA-1", nome: "Banco do Brasil", grupo: "ATIVO_CIRCULANTE", saldoInicial: 0, saldoExtratoReal: 0, ultimaConciliacao: "" },
+      { id: "CTA-2", nome: "Banco Inter", grupo: "ATIVO_CIRCULANTE", saldoInicial: 0, saldoExtratoReal: 0, ultimaConciliacao: "" },
+      { id: "CTA-3", nome: "Mercado Pago", grupo: "ATIVO_CIRCULANTE", saldoInicial: 0, saldoExtratoReal: 0, ultimaConciliacao: "" },
+      { id: "CTA-4", nome: "Reserva / Investimentos", grupo: "ATIVO_INVESTIMENTO", saldoInicial: 0, saldoExtratoReal: 0, ultimaConciliacao: "" }
+    ],
+    orcamentos: []
+  };
+
+  let filaOffline = JSON.parse(localStorage.getItem("fin360_fila_v4") || "[]");
+  let tipoAtual = "DESPESA";
 
   const hoje = new Date();
-  document.getElementById("inp-data-lanc").valueAsDate = hoje;
+  const hojeISO = hoje.toISOString().split("T")[0];
+  document.getElementById("dataCompetencia").value = hojeISO;
+  document.getElementById("dataVencimento").value = hojeISO;
+  document.getElementById("dataCreditoEmprestimo").value = hojeISO;
+  document.getElementById("filtro-mes-dre").value = hojeISO.substring(0, 7);
+
   const proxMes = new Date(hoje.getFullYear(), hoje.getMonth() + 1, hoje.getDate());
-  document.getElementById("inp-vencimento").valueAsDate = proxMes;
+  document.getElementById("dataPrimeiraParcelaEmp").value = proxMes.toISOString().split("T")[0];
 
   function moeda(v) {
     return "R$ " + Number(v || 0).toFixed(2).replace(".", ",");
@@ -566,641 +615,649 @@
     renderizarTudo();
   }
 
-  // 1. AUTO-CLASSIFICADOR POR PALAVRA-CHAVE (ECONOMIZA CLIQUES)
-  function detectarCategoriaAutomatica(texto) {
-    const t = texto.toLowerCase();
-    const selCat = document.getElementById("inp-categoria");
-    const badge = document.getElementById("badge-auto-cat");
-    let achou = "";
-
-    if (/mercado|ifood|lanche|restaurante|padaria|pizza|carne|açaí|almoço|jantar/.test(t)) achou = "Alimentação";
-    else if (/uber|99|gasolina|posto|combustivel|estacionamento|onibus|passagem|mecanico/.test(t)) achou = "Transporte";
-    else if (/aluguel|luz|energia|agua|internet|condominio|iptu|celular|vivo|claro|tim/.test(t)) achou = "Moradia & Contas Fixas";
-    else if (/farmacia|remedio|medico|consulta|exame|academia|curso|faculdade|escola/.test(t)) achou = "Saúde & Educação";
-    else if (/salario|pagamento|pix recebido|cliente|venda|freela|dividendo/.test(t)) achou = "Salário / Pró-labore";
-    else if (/mei|das|fornecedor|anuncio|estoque|empresa/.test(t)) {
-      achou = "Operacional MEI / Trabalho";
-      document.getElementById("inp-entidade").value = "Negócio/MEI";
+  function preencherSelectsContas() {
+    const opts = state.contas.map(c => `<option value="${escapar(c.nome)}">${escapar(c.nome)}</option>`).join("");
+    ["contaOrigem", "contaDestino", "contaCreditoEmprestimo"].forEach(id => {
+      const el = document.getElementById(id);
+      const valAnterior = el.value;
+      el.innerHTML = opts;
+      if (valAnterior) el.value = valAnterior;
+    });
+    if (state.contas.length > 1) {
+      document.getElementById("contaDestino").selectedIndex = 1;
     }
-
-    if (achou) {
-      selCat.value = achou;
-      badge.innerText = `• ${achou}`;
-    } else {
-      badge.innerText = "";
-    }
-    atualizarResumoPadrao();
   }
 
-  // 2. CONTROLE DA INTERFACE SIMPLIFICADA
-  function abrirMaisTipos(el) {
-    const sub = document.getElementById("sub-tipos-outros");
-    sub.style.display = sub.style.display === "none" ? "grid" : "none";
-  }
-
-  function toggleDetalhesAvancados() {
-    const gaveta = document.getElementById("gaveta-avancada");
-    gaveta.style.display = gaveta.style.display === "none" ? "block" : "none";
-  }
-
-  function atualizarResumoPadrao() {
-    const selConta = document.getElementById("inp-conta");
-    const nomeConta = selConta.options[selConta.selectedIndex]?.text.split(" (")[0] || "Conta";
-    const ent = document.getElementById("inp-entidade").value;
-    document.getElementById("resumo-padrao").innerText = `${nomeConta} • ${ent}`;
-    atualizarCoerencia();
-  }
-
-  // 3. SELETOR DE TIPO COM COERÊNCIA CONTÁBIL
-  function selecionarTipo(tipo, el) {
+  function selecionarTipo(tipo) {
     tipoAtual = tipo;
-    document.querySelectorAll(".tipo-opt").forEach(opt => opt.className = "tipo-opt");
-    el.classList.add("sel-" + tipo);
+    ["DESPESA", "RECEITA", "TRANSFERENCIA", "PARCELADO", "EMPRESTIMO"].forEach(t => {
+      const el = document.getElementById("opt-" + t);
+      el.className = "tipo-opt" + (t === tipo ? " sel-" + t.toLowerCase() : "");
+    });
 
-    const linhaParcelas = document.getElementById("linha-parcelas-rapida");
-    const grpTotal = document.getElementById("grp-valor-total");
-    const grpDestino = document.getElementById("grp-conta-destino");
-    const grpVenc = document.getElementById("grp-vencimento");
-    const lblValor = document.getElementById("lbl-valor-principal");
+    const blocoPadrao = document.getElementById("bloco-padrao");
+    const blocoEmp = document.getElementById("bloco-emprestimo");
+    const boxTransf = document.getElementById("box-transferencia");
+    const boxDre = document.getElementById("box-classificacao-dre");
+    const boxPrudRec = document.getElementById("box-prudencia-receita");
+    const boxParc = document.getElementById("box-parcelas-compra");
 
-    linhaParcelas.style.display = "none";
-    grpTotal.style.display = "none";
-    grpDestino.style.display = "none";
-    grpVenc.style.display = "none";
-    lblValor.innerText = "Valor (R$) *";
+    if (tipo === "EMPRESTIMO") {
+      blocoPadrao.style.display = "none";
+      blocoEmp.style.display = "block";
+      document.getElementById("categoria").value = "Empréstimo / Financiamento";
+    } else {
+      blocoPadrao.style.display = "block";
+      blocoEmp.style.display = "none";
+      boxTransf.style.display = tipo === "TRANSFERENCIA" ? "block" : "none";
+      boxDre.style.display = tipo === "TRANSFERENCIA" ? "none" : "grid";
+      boxPrudRec.style.display = tipo === "RECEITA" ? "block" : "none";
+      boxParc.style.display = tipo === "PARCELADO" ? "block" : "none";
 
-    if (tipo === "parcelado") {
-      linhaParcelas.style.display = "grid";
-      grpVenc.style.display = "block";
-    } else if (tipo === "emprestimo") {
-      linhaParcelas.style.display = "grid";
-      grpTotal.style.display = "block";
-      grpVenc.style.display = "block";
-      lblValor.innerText = "Valor da Parcela ou Total a Pagar (R$) *";
-      document.getElementById("inp-categoria").value = "Empréstimo / Financiamento";
-    } else if (tipo === "transferencia") {
-      grpDestino.style.display = "block";
-      lblValor.innerText = "Valor Transferido (R$) *";
-    } else if (tipo === "receber") {
-      linhaParcelas.style.display = "grid";
-      grpVenc.style.display = "block";
-      lblValor.innerText = "Valor a Receber (R$) *";
+      document.getElementById("label-conta-origem").innerText =
+        tipo === "RECEITA" ? "Conta onde o dinheiro entrou *" :
+        tipo === "TRANSFERENCIA" ? "Conta de Origem (Saída) *" : "Conta / Meio de Pagamento *";
+
+      document.getElementById("label-data-caixa").innerText =
+        tipo === "PARCELADO" ? "Vencimento da 1ª Parcela *" : "Data Efetiva no Caixa *";
     }
-
-    atualizarCoerencia();
-    document.getElementById("inp-valor").focus();
+    atualizarExplicacaoLogica();
   }
 
-  function atualizarCoerencia() {
-    const box = document.getElementById("box-coerencia");
-    const val = parseFloat(document.getElementById("inp-valor").value) || 0;
-    const qtd = Math.max(1, parseInt(document.getElementById("inp-qtd-parcelas").value) || 1);
-    const modo = document.getElementById("inp-modo-parcela").value;
-    const conta = document.getElementById("inp-conta").value;
+  function atualizarExplicacaoLogica() {
+    const box = document.getElementById("explicacao-logica");
+    const val = parseFloat(document.getElementById("valor").value) || 0;
 
-    const vParc = modo === "TOTAL" ? (val / qtd) : val;
-    const vTot = modo === "TOTAL" ? val : (val * qtd);
-
-    if (tipoAtual === "despesa") {
-      box.innerHTML = `💸 <b>Saída Real (${conta}):</b> Abate <b>${moeda(val)}</b> imediatamente do saldo disponível.`;
-    } else if (tipoAtual === "receita") {
-      box.innerHTML = `💰 <b>Entrada Real (${conta}):</b> Soma <b>${moeda(val)}</b> ao saldo da conta e às receitas próprias.`;
-    } else if (tipoAtual === "parcelado") {
-      box.innerHTML = `💳 <b>Passivo Programado:</b> Não mexe no saldo hoje. Cria <b>${qtd}x de ${moeda(vParc)}</b> (Total: ${moeda(vTot)}) em A Pagar com alerta no visor.`;
-    } else if (tipoAtual === "emprestimo") {
-      const vLiq = parseFloat(document.getElementById("inp-valor-liquido-emp").value) || 0;
-      box.innerHTML =
-        `🏦 <b>Partida Dobrada de Empréstimo:</b><br>` +
-        `• Entra <b>+ ${moeda(vLiq)}</b> hoje na conta <b>${conta}</b> (sem contar como receita de trabalho).<br>` +
-        `• Nasce um passivo de <b>${moeda(vTot)}</b> (${qtd}x de ${moeda(vParc)}) em A Pagar.`;
-    } else if (tipoAtual === "transferencia") {
-      const dest = document.getElementById("inp-conta-destino").value;
-      box.innerHTML = `🔄 <b>Transferência Neutra:</b> Sai <b>${moeda(val)}</b> de <b>${conta}</b> e entra em <b>${dest}</b> (não altera seu patrimônio nem despesas).`;
-    } else if (tipoAtual === "receber") {
-      box.innerHTML = `📥 <b>Recebível Futuro:</b> Não soma ao caixa hoje. Agenda <b>${qtd}x de ${moeda(vParc)}</b> (Total: ${moeda(vTot)}) para confirmar entrada na data combinada.`;
+    if (tipoAtual === "DESPESA") {
+      box.innerHTML = `💸 <b>Regime de Caixa & Competência:</b> Debita <b>${moeda(val)}</b> da conta selecionada e entra como despesa operacional na DRE.`;
+    } else if (tipoAtual === "RECEITA") {
+      const seg = document.getElementById("segurancaReceita").value;
+      box.innerHTML = seg === "INCERTA"
+        ? `🛡️ <b>Prudência Ativada:</b> Receita marcada como <b>Incerta</b>. Fica registrada como previsão sem inflar o saldo disponível até você confirmar o recebimento.`
+        : `💰 <b>Receita Confirmada:</b> Credita <b>${moeda(val)}</b> na conta selecionada e compõe o resultado positivo da DRE.`;
+    } else if (tipoAtual === "TRANSFERENCIA") {
+      const orig = document.getElementById("contaOrigem").value;
+      const dest = document.getElementById("contaDestino").value;
+      box.innerHTML = `🔄 <b>Partidas Dobradas (Neutra na DRE):</b> Sai <b>${moeda(val)}</b> de <b>${escapar(orig)}</b> e entra <b>${moeda(val)}</b> em <b>${escapar(dest)}</b>. Não distorce suas despesas nem seu Patrimônio Líquido.`;
+    } else if (tipoAtual === "PARCELADO") {
+      const qtd = parseInt(document.getElementById("qtdParcelasCompra").value) || 1;
+      const modo = document.getElementById("modoValorCompra").value;
+      const vParc = modo === "TOTAL" ? (val / qtd) : val;
+      box.innerHTML = `💳 <b>Competência Hoje, Caixa no Vencimento:</b> Cria <b>${qtd} parcelas de ${moeda(vParc)}</b> no Passivo (A Pagar) com alerta no visor. O saldo bancário só diminui no dia de cada baixa.`;
+    } else if (tipoAtual === "EMPRESTIMO") {
+      const vLiq = parseFloat(document.getElementById("valorLiquidoEmprestimo").value) || 0;
+      const qtd = parseInt(document.getElementById("qtdParcelasEmp").value) || 1;
+      const vParc = parseFloat(document.getElementById("valorParcelaEmp").value) || 0;
+      box.innerHTML = `🏦 <b>Partida Dobrada de Empréstimo:</b> Ativo (Conta) sobe <b>+ ${moeda(vLiq)}</b> hoje, enquanto o Passivo (A Pagar) sobe <b>+ ${moeda(vParc * qtd)}</b> (${qtd}x de ${moeda(vParc)}). A diferença de juros reduz o Patrimônio Líquido.`;
     }
   }
 
-  async function salvarLancamentoSmart() {
-    const descricao = document.getElementById("inp-descricao").value.trim();
-    const val = parseFloat(document.getElementById("inp-valor").value) || 0;
-    const conta = document.getElementById("inp-conta").value;
-    const entidade = document.getElementById("inp-entidade").value;
-    const categoria = document.getElementById("inp-categoria").value;
-    const dataLancISO = document.getElementById("inp-data-lanc").value || new Date().toISOString().split("T")[0];
-    const dataVencISO = document.getElementById("inp-vencimento").value || dataLancISO;
-
-    if (!descricao || val <= 0) {
-      alert("Preencha a descrição e um valor maior que zero.");
-      return;
-    }
+  async function registrarLancamento() {
+    const descricao = document.getElementById("descricao").value.trim();
+    const categoria = document.getElementById("categoria").value;
+    if (!descricao) { alert("Informe a descrição."); return; }
 
     const novosItens = [];
     const grupoId = "GRP-" + Date.now();
-    const dataLancBr = dataLancISO.split("-").reverse().join("/");
-    const metaForma = `${conta} | ${entidade}`;
 
-    if (tipoAtual === "despesa" || tipoAtual === "receita") {
-      novosItens.push({
-        id: "LNC-" + Date.now(),
-        dataLancamento: dataLancBr,
-        vencimento: dataLancISO,
-        dataPagamento: dataLancBr,
-        tipo: tipoAtual === "receita" ? "RECEITA" : "DESPESA",
-        categoria: categoria,
-        descricao: descricao,
-        valor: val,
-        status: "PAGO",
-        grupoId: grupoId,
-        parcelaAtual: 1,
-        totalParcelas: 1,
-        forma: metaForma
-      });
+    if (tipoAtual === "DESPESA" || tipoAtual === "RECEITA" || tipoAtual === "TRANSFERENCIA") {
+      const valor = parseFloat(document.getElementById("valor").value) || 0;
+      const dataComp = document.getElementById("dataCompetencia").value;
+      const dataCaixa = document.getElementById("dataVencimento").value;
+      const contaOrigem = document.getElementById("contaOrigem").value;
+      const contaDestino = tipoAtual === "TRANSFERENCIA" ? document.getElementById("contaDestino").value : "";
+      const tipoCusto = document.getElementById("tipoCusto").value;
+      const segReceita = tipoAtual === "RECEITA" ? document.getElementById("segurancaReceita").value : "CERTA";
 
-    } else if (tipoAtual === "transferencia") {
-      const contaDest = document.getElementById("inp-conta-destino").value;
-      if (conta === contaDest) {
-        alert("Escolha uma conta de destino diferente da conta de origem.");
+      if (valor <= 0 || !dataComp || !dataCaixa) { alert("Preencha valor e datas."); return; }
+      if (tipoAtual === "TRANSFERENCIA" && contaOrigem === contaDestino) {
+        alert("Na transferência, a conta de destino deve ser diferente da conta de origem.");
         return;
       }
 
+      const statusInicial = (tipoAtual === "RECEITA" && segReceita === "INCERTA") ? "PENDENTE" : "PAGO";
+
       novosItens.push({
-        id: "TRF-OUT-" + Date.now(),
-        dataLancamento: dataLancBr,
-        vencimento: dataLancISO,
-        dataPagamento: dataLancBr,
-        tipo: "TRANSF_SAIDA",
-        categoria: "Transferência",
-        descricao: `Transf. para ${contaDest}: ${descricao}`,
-        valor: val,
-        status: "PAGO",
+        id: "LNC-" + Date.now(),
+        dataCompetencia: dataComp,
+        dataVencimento: dataCaixa,
+        dataCaixa: statusInicial === "PAGO" ? dataCaixa : "",
+        natureza: tipoAtual,
+        tipoCusto: tipoAtual === "TRANSFERENCIA" ? "NAO_OPERACIONAL" : tipoCusto,
+        categoria: categoria,
+        descricao: descricao,
+        valor: valor,
+        status: statusInicial,
+        contaOrigem: contaOrigem,
+        contaDestino: contaDestino,
         grupoId: grupoId,
         parcelaAtual: 1,
         totalParcelas: 1,
-        forma: `${conta} | ${entidade}`
+        segurancaReceita: segReceita
       });
 
-      novosItens.push({
-        id: "TRF-IN-" + Date.now(),
-        dataLancamento: dataLancBr,
-        vencimento: dataLancISO,
-        dataPagamento: dataLancBr,
-        tipo: "TRANSF_ENTRADA",
-        categoria: "Transferência",
-        descricao: `Transf. de ${conta}: ${descricao}`,
-        valor: val,
-        status: "PAGO",
-        grupoId: grupoId,
-        parcelaAtual: 1,
-        totalParcelas: 1,
-        forma: `${contaDest} | ${entidade}`
-      });
+    } else if (tipoAtual === "PARCELADO") {
+      const valor = parseFloat(document.getElementById("valor").value) || 0;
+      const dataComp = document.getElementById("dataCompetencia").value;
+      const dataBase = document.getElementById("dataVencimento").value;
+      const contaOrigem = document.getElementById("contaOrigem").value;
+      const tipoCusto = document.getElementById("tipoCusto").value;
+      const qtd = Math.max(1, parseInt(document.getElementById("qtdParcelasCompra").value) || 1);
+      const modo = document.getElementById("modoValorCompra").value;
 
-    } else if (tipoAtual === "parcelado" || tipoAtual === "receber") {
-      const qtd = Math.max(1, parseInt(document.getElementById("inp-qtd-parcelas").value) || 1);
-      const modo = document.getElementById("inp-modo-parcela").value;
-      const vParc = modo === "TOTAL" ? Number((val / qtd).toFixed(2)) : val;
-      const [ano, mes, dia] = dataVencISO.split("-").map(Number);
+      if (valor <= 0 || !dataBase) { alert("Informe valor e data do 1º vencimento."); return; }
+      const vParc = modo === "TOTAL" ? Number((valor / qtd).toFixed(2)) : valor;
+      const [ano, mes, dia] = dataBase.split("-").map(Number);
 
       for (let i = 0; i < qtd; i++) {
-        const dtV = new Date(ano, (mes - 1) + i, dia);
-        const isoV = dtV.toISOString().split("T")[0];
+        const dtVenc = new Date(ano, (mes - 1) + i, dia).toISOString().split("T")[0];
         novosItens.push({
-          id: (tipoAtual === "receber" ? "REC-" : "PARC-") + Date.now() + "-" + (i + 1),
-          dataLancamento: dataLancBr,
-          vencimento: isoV,
-          dataPagamento: "",
-          tipo: tipoAtual === "receber" ? "A_RECEBER" : "PARCELADO",
+          id: "PARC-" + Date.now() + "-" + (i + 1),
+          dataCompetencia: dataComp,
+          dataVencimento: dtVenc,
+          dataCaixa: "",
+          natureza: "PARCELADO",
+          tipoCusto: tipoCusto,
           categoria: categoria,
           descricao: `${descricao} (${i + 1}/${qtd})`,
           valor: vParc,
           status: "PENDENTE",
+          contaOrigem: contaOrigem,
+          contaDestino: "",
           grupoId: grupoId,
           parcelaAtual: i + 1,
           totalParcelas: qtd,
-          forma: metaForma
+          segurancaReceita: "CERTA"
         });
       }
 
-    } else if (tipoAtual === "emprestimo") {
-      const vLiquido = parseFloat(document.getElementById("inp-valor-liquido-emp").value) || 0;
-      if (vLiquido <= 0) {
-        alert("Informe o valor líquido do empréstimo que entrou na sua conta hoje.");
-        return;
-      }
+    } else if (tipoAtual === "EMPRESTIMO") {
+      const vLiq = parseFloat(document.getElementById("valorLiquidoEmprestimo").value) || 0;
+      const contaCred = document.getElementById("contaCreditoEmprestimo").value;
+      const dataCred = document.getElementById("dataCreditoEmprestimo").value;
+      const dataPrim = document.getElementById("dataPrimeiraParcelaEmp").value;
+      const qtd = Math.max(1, parseInt(document.getElementById("qtdParcelasEmp").value) || 1);
+      const vParc = parseFloat(document.getElementById("valorParcelaEmp").value) || 0;
 
-      const qtd = Math.max(1, parseInt(document.getElementById("inp-qtd-parcelas").value) || 1);
-      const modo = document.getElementById("inp-modo-parcela").value;
-      const vParc = modo === "TOTAL" ? Number((val / qtd).toFixed(2)) : val;
+      if (vLiq <= 0 || vParc <= 0 || !dataCred || !dataPrim) { alert("Preencha todos os campos do empréstimo."); return; }
 
-      // 1. Entrada líquida no caixa
+      // 1. Entrada do crédito no Ativo (Conta Bancária)
       novosItens.push({
         id: "EMP-ENT-" + Date.now(),
-        dataLancamento: dataLancBr,
-        vencimento: dataLancISO,
-        dataPagamento: dataLancBr,
-        tipo: "CREDITO_EMPRESTIMO",
+        dataCompetencia: dataCred,
+        dataVencimento: dataCred,
+        dataCaixa: dataCred,
+        natureza: "CREDITO_EMPRESTIMO",
+        tipoCusto: "NAO_OPERACIONAL",
         categoria: categoria,
-        descricao: `Crédito Empréstimo: ${descricao}`,
-        valor: vLiquido,
+        descricao: `Crédito Liberado: ${descricao}`,
+        valor: vLiq,
         status: "PAGO",
+        contaOrigem: contaCred,
+        contaDestino: "",
         grupoId: grupoId,
         parcelaAtual: 0,
         totalParcelas: qtd,
-        forma: metaForma
+        segurancaReceita: "CERTA"
       });
 
-      // 2. Criação imediata do passivo em parcelas
-      const [ano, mes, dia] = dataVencISO.split("-").map(Number);
+      // 2. Passivo das parcelas a pagar
+      const [ano, mes, dia] = dataPrim.split("-").map(Number);
       for (let i = 0; i < qtd; i++) {
-        const dtV = new Date(ano, (mes - 1) + i, dia);
-        const isoV = dtV.toISOString().split("T")[0];
+        const dtVenc = new Date(ano, (mes - 1) + i, dia).toISOString().split("T")[0];
         novosItens.push({
           id: "EMP-PARC-" + Date.now() + "-" + (i + 1),
-          dataLancamento: dataLancBr,
-          vencimento: isoV,
-          dataPagamento: "",
-          tipo: "EMPRESTIMO",
+          dataCompetencia: dtVenc,
+          dataVencimento: dtVenc,
+          dataCaixa: "",
+          natureza: "EMPRESTIMO",
+          tipoCusto: "FIXO",
           categoria: categoria,
           descricao: `${descricao} (${i + 1}/${qtd})`,
           valor: vParc,
           status: "PENDENTE",
+          contaOrigem: contaCred,
+          contaDestino: "",
           grupoId: grupoId,
           parcelaAtual: i + 1,
           totalParcelas: qtd,
-          forma: metaForma
+          segurancaReceita: "CERTA"
         });
       }
     }
 
-    registros = [...novosItens, ...registros];
+    state.lancamentos = [...novosItens, ...state.lancamentos];
     salvarLocal();
     agendarNotificacoesNativas();
-    enviarParaPlanilha({ acao: "salvarLote", itens: novosItens });
-
-    document.getElementById("inp-descricao").value = "";
-    document.getElementById("inp-valor").value = "";
-    document.getElementById("inp-valor-liquido-emp").value = "";
-    document.getElementById("badge-auto-cat").innerText = "";
     renderizarTudo();
-    alert("Lançamento registrado com sucesso!");
+
+    await enviarParaPlanilha({ acao: "salvarLote", itens: novosItens });
+
+    document.getElementById("descricao").value = "";
+    document.getElementById("valor").value = "";
+    document.getElementById("valorLiquidoEmprestimo").value = "";
+    document.getElementById("valorParcelaEmp").value = "";
   }
 
-  function darBaixaParcela(id) {
-    const hojeStr = new Date().toLocaleDateString("pt-BR");
-    registros = registros.map(r => {
-      if (r.id === id) {
-        const novoTipo = r.tipo === "A_RECEBER" ? "RECEITA" : r.tipo;
-        return { ...r, tipo: novoTipo, status: "PAGO", dataPagamento: hojeStr };
-      }
-      return r;
+  async function darBaixaParcela(id) {
+    const hojeStr = new Date().toISOString().split("T")[0];
+    state.lancamentos = state.lancamentos.map(r => r.id === id ? { ...r, status: "PAGO", dataCaixa: hojeStr } : r);
+    salvarLocal();
+    cancelarNotificacaoEspecifica(id);
+    renderizarTudo();
+    await enviarParaPlanilha({ acao: "baixarParcela", id: id, dataCaixa: hojeStr });
+  }
+
+  async function excluirRegistro(id) {
+    if (!confirm("Excluir este lançamento da planilha e do aplicativo?")) return;
+    state.lancamentos = state.lancamentos.filter(r => r.id !== id);
+    salvarLocal();
+    cancelarNotificacaoEspecifica(id);
+    renderizarTudo();
+    await enviarParaPlanilha({ acao: "excluirRegistro", id: id });
+  }
+
+  async function conciliarContaPrompt(nomeConta, saldoSistema) {
+    const novoExtrato = prompt(`Conciliação Bancária — ${nomeConta}\nSaldo calculado pelo sistema: ${moeda(saldoSistema)}\n\nDigite o saldo real que aparece no extrato do banco agora:`, saldoSistema.toFixed(2));
+    if (novoExtrato === null) return;
+    const valNum = parseFloat(novoExtrato.replace(",", ".")) || 0;
+
+    state.contas = state.contas.map(c => c.nome === nomeConta ? {
+      ...c,
+      saldoExtratoReal: valNum,
+      ultimaConciliacao: new Date().toLocaleDateString("pt-BR")
+    } : c);
+    salvarLocal();
+    renderizarTudo();
+    await enviarParaPlanilha({ acao: "conciliarConta", nomeConta: nomeConta, saldoExtratoReal: valNum });
+  }
+
+  async function ajustarSaldoInicialPrompt(nomeConta, saldoIniAtual) {
+    const novoIni = prompt(`Saldo Inicial de ${nomeConta} (antes dos lançamentos do app):`, saldoIniAtual.toFixed(2));
+    if (novoIni === null) return;
+    const valNum = parseFloat(novoIni.replace(",", ".")) || 0;
+
+    state.contas = state.contas.map(c => c.nome === nomeConta ? { ...c, saldoInicial: valNum } : c);
+    salvarLocal();
+    renderizarTudo();
+    await enviarParaPlanilha({ acao: "conciliarConta", nomeConta: nomeConta, saldoInicial: valNum });
+  }
+
+  async function novaContaPrompt() {
+    const nome = prompt("Nome da nova conta, banco ou bem patrimonial (ex: Caixa Físico, CDB, Veículo):");
+    if (!nome) return;
+    const grupo = confirm("É uma conta bancária/dinheiro circulante? (OK = Conta/Banco | Cancelar = Investimento/Bem)")
+      ? "ATIVO_CIRCULANTE" : "ATIVO_INVESTIMENTO";
+    const saldoIni = parseFloat((prompt("Saldo inicial atual (R$):", "0") || "0").replace(",", ".")) || 0;
+
+    state.contas.push({
+      id: "CTA-" + Date.now(),
+      nome: nome.trim(),
+      grupo: grupo,
+      saldoInicial: saldoIni,
+      saldoExtratoReal: saldoIni,
+      ultimaConciliacao: ""
     });
-
     salvarLocal();
-    cancelarNotificacaoEspecifica(id);
-    enviarParaPlanilha({ acao: "baixarParcela", id: id });
+    preencherSelectsContas();
     renderizarTudo();
-  }
-
-  function excluirRegistro(id) {
-    if (!confirm("Remover este registro?")) return;
-    registros = registros.filter(r => r.id !== id);
-    salvarLocal();
-    cancelarNotificacaoEspecifica(id);
-    enviarParaPlanilha({ acao: "excluirRegistro", id: id });
-    renderizarTudo();
-  }
-
-  function extrairConta_(formaStr) {
-    if (!formaStr) return "Conta Principal";
-    return String(formaStr).split("|")[0].trim() || "Conta Principal";
+    await enviarParaPlanilha({ acao: "adicionarConta", nomeConta: nome.trim(), grupo: grupo, saldoInicial: saldoIni });
   }
 
   function renderizarTudo() {
-    let entradasCaixaTotais = 0;
-    let receitasProprias = 0;
-    let saidasReais = 0;
-    let passivoTotal = 0;
-    let qtdPendentes = 0;
+    preencherSelectsContas();
 
-    const hojeISO = new Date().toISOString().split("T")[0];
+    // 1. CÁLCULO DE SALDOS POR CONTA (PARTIDAS DOBRADAS)
+    const saldosContas = {};
+    state.contas.forEach(c => { saldosContas[c.nome] = Number(c.saldoInicial) || 0; });
+
+    let passivosTotais = 0;
+    let qtdPendentes = 0;
+    const hojeStr = new Date().toISOString().split("T")[0];
+
     let htmlPendentes = "";
     let htmlExtrato = "";
     const gruposEmprestimos = {};
-    const saldosPorConta = {};
+    const filtroBusca = (document.getElementById("busca-razao").value || "").toLowerCase();
 
-    registros.forEach(r => {
+    state.lancamentos.forEach(r => {
       const val = Number(r.valor) || 0;
-      const contaNome = extrairConta_(r.forma);
-      if (saldosPorConta[contaNome] === undefined) saldosPorConta[contaNome] = 0;
+      const nat = String(r.natureza || "").toUpperCase();
 
       if (r.status === "PAGO") {
-        if (r.tipo === "RECEITA") {
-          entradasCaixaTotais += val;
-          receitasProprias += val;
-          saldosPorConta[contaNome] += val;
-          htmlExtrato += `
-            <div class="item-lista pago-receita">
-              <div>
-                <div style="font-weight:700; font-size:14px;">${escapar(r.descricao)}</div>
-                <div style="font-size:12px; color:var(--muted); margin-top:3px;">
-                  💰 Receita • ${escapar(r.forma || r.categoria)} • ${r.dataPagamento || r.vencimento}
-                </div>
-              </div>
-              <div style="display:flex; align-items:center; gap:10px;">
-                <b style="color:var(--green); font-size:15px;">+ ${moeda(val)}</b>
-                <button class="btn-excluir" onclick="excluirRegistro('${r.id}')">✕</button>
-              </div>
-            </div>`;
-        } else if (r.tipo === "CREDITO_EMPRESTIMO") {
-          entradasCaixaTotais += val;
-          saldosPorConta[contaNome] += val;
-          htmlExtrato += `
-            <div class="item-lista pago-credito">
-              <div>
-                <div style="font-weight:700; font-size:14px;">${escapar(r.descricao)}</div>
-                <div style="font-size:12px; color:#d8b4fe; margin-top:3px;">
-                  🏦 Crédito de Empréstimo • ${escapar(r.forma)} • ${r.dataPagamento || r.vencimento}
-                </div>
-              </div>
-              <div style="display:flex; align-items:center; gap:10px;">
-                <b style="color:#c084fc; font-size:15px;">+ ${moeda(val)}</b>
-                <button class="btn-excluir" onclick="excluirRegistro('${r.id}')">✕</button>
-              </div>
-            </div>`;
-        } else if (r.tipo === "TRANSF_ENTRADA") {
-          saldosPorConta[contaNome] += val;
-          htmlExtrato += `
-            <div class="item-lista pago-transf">
-              <div>
-                <div style="font-weight:700; font-size:14px;">${escapar(r.descricao)}</div>
-                <div style="font-size:12px; color:#7dd3fc; margin-top:3px;">
-                  🔄 Transferência Recebida • ${escapar(r.forma)} • ${r.dataPagamento || r.vencimento}
-                </div>
-              </div>
-              <div style="display:flex; align-items:center; gap:10px;">
-                <b style="color:var(--blue); font-size:15px;">+ ${moeda(val)}</b>
-                <button class="btn-excluir" onclick="excluirRegistro('${r.id}')">✕</button>
-              </div>
-            </div>`;
-        } else if (r.tipo === "TRANSF_SAIDA") {
-          saldosPorConta[contaNome] -= val;
-          htmlExtrato += `
-            <div class="item-lista pago-transf">
-              <div>
-                <div style="font-weight:700; font-size:14px;">${escapar(r.descricao)}</div>
-                <div style="font-size:12px; color:#7dd3fc; margin-top:3px;">
-                  🔄 Transferência Enviada • ${escapar(r.forma)} • ${r.dataPagamento || r.vencimento}
-                </div>
-              </div>
-              <div style="display:flex; align-items:center; gap:10px;">
-                <b style="color:var(--blue); font-size:15px;">- ${moeda(val)}</b>
-                <button class="btn-excluir" onclick="excluirRegistro('${r.id}')">✕</button>
-              </div>
-            </div>`;
+        if (nat === "RECEITA" || nat === "CREDITO_EMPRESTIMO") {
+          saldosContas[r.contaOrigem] = (saldosContas[r.contaOrigem] || 0) + val;
+        } else if (nat === "TRANSFERENCIA") {
+          saldosContas[r.contaOrigem] = (saldosContas[r.contaOrigem] || 0) - val;
+          if (r.contaDestino) {
+            saldosContas[r.contaDestino] = (saldosContas[r.contaDestino] || 0) + val;
+          }
         } else {
-          saidasReais += val;
-          saldosPorConta[contaNome] -= val;
-          htmlExtrato += `
-            <div class="item-lista pago-despesa">
+          // DESPESA, PARCELADO pago, EMPRESTIMO pago
+          saldosContas[r.contaOrigem] = (saldosContas[r.contaOrigem] || 0) - val;
+        }
+      } else {
+        // PENDENTE
+        if (nat === "RECEITA" && r.segurancaReceita === "INCERTA") {
+          // Prudência: não entra no ativo nem no passivo enquanto não receber
+        } else {
+          passivosTotais += val;
+          qtdPendentes++;
+          const atrasado = r.dataVencimento < hojeStr;
+          const dataBr = (r.dataVencimento || "").split("-").reverse().join("/");
+
+          htmlPendentes += `
+            <div class="item-lista ${atrasado ? 'vencido' : 'pendente'}">
               <div>
-                <div style="font-weight:700; font-size:14px;">${escapar(r.descricao)}</div>
-                <div style="font-size:12px; color:var(--muted); margin-top:3px;">
-                  💸 Saída Real • ${escapar(r.forma || r.categoria)} • Pago em ${r.dataPagamento || r.vencimento}
+                <div style="font-weight:700; font-size:13.5px;">${escapar(r.descricao)}</div>
+                <div style="font-size:11.5px; color:${atrasado ? '#fca5a5' : 'var(--muted)'}; margin-top:3px;">
+                  ${nat === 'EMPRESTIMO' ? '🏦 Empréstimo' : '💳 Passivo'} • Conta: <b>${escapar(r.contaOrigem)}</b> • Vence: <b>${dataBr}</b> ${atrasado ? '(ATRASADO)' : ''}
                 </div>
               </div>
-              <div style="display:flex; align-items:center; gap:10px;">
-                <b style="color:var(--red); font-size:15px;">- ${moeda(val)}</b>
+              <div style="display:flex; align-items:center; gap:7px;">
+                <b style="color:var(--amber); font-size:14px;">${moeda(val)}</b>
+                <button class="btn-baixar" onclick="darBaixaParcela('${r.id}')">✓ Pagar</button>
                 <button class="btn-excluir" onclick="excluirRegistro('${r.id}')">✕</button>
               </div>
             </div>`;
         }
-      } else {
-        const ehReceber = r.tipo === "A_RECEBER";
-        if (!ehReceber) passivoTotal += val;
-        qtdPendentes++;
-        const atrasado = r.vencimento < hojeISO;
-        const dataBr = r.vencimento.split("-").reverse().join("/");
+      }
 
-        htmlPendentes += `
-          <div class="item-lista ${atrasado ? 'vencido' : 'pendente'}">
+      // Agrupa Empréstimos
+      if (nat === "EMPRESTIMO" || nat === "CREDITO_EMPRESTIMO") {
+        const g = r.grupoId || r.descricao;
+        if (!gruposEmprestimos[g]) {
+          gruposEmprestimos[g] = {
+            nome: r.descricao.replace(/^Crédito Liberado:\s*/, "").replace(/\s*\(\d+\/\d+\)$/, ""),
+            credito: 0, totalContrato: 0, pago: 0, pagas: 0, totalParc: r.totalParcelas || 1
+          };
+        }
+        if (nat === "CREDITO_EMPRESTIMO") gruposEmprestimos[g].credito += val;
+        else {
+          gruposEmprestimos[g].totalContrato += val;
+          if (r.status === "PAGO") { gruposEmprestimos[g].pago += val; gruposEmprestimos[g].pagas++; }
+        }
+      }
+
+      // Livro Razão / Extrato
+      if (
+        r.descricao.toLowerCase().includes(filtroBusca) ||
+        r.categoria.toLowerCase().includes(filtroBusca) ||
+        r.contaOrigem.toLowerCase().includes(filtroBusca)
+      ) {
+        const corClass = nat === "TRANSFERENCIA" ? "pago-transf" :
+          (nat === "RECEITA" || nat === "CREDITO_EMPRESTIMO") ? "pago-receita" :
+          r.status === "PENDENTE" ? "pendente" : "pago-despesa";
+
+        const sinal = (nat === "RECEITA" || nat === "CREDITO_EMPRESTIMO") ? "+" :
+          nat === "TRANSFERENCIA" ? "⇄" : "-";
+
+        const corVal = (nat === "RECEITA" || nat === "CREDITO_EMPRESTIMO") ? "var(--green)" :
+          nat === "TRANSFERENCIA" ? "var(--blue)" :
+          r.status === "PENDENTE" ? "var(--amber)" : "var(--red)";
+
+        htmlExtrato += `
+          <div class="item-lista ${corClass}">
             <div>
-              <div style="font-weight:700; font-size:14px;">${escapar(r.descricao)}</div>
-              <div style="font-size:12px; color:${atrasado ? '#fca5a5' : 'var(--muted)'}; margin-top:3px;">
-                ${ehReceber ? '📥 A Receber' : (r.tipo === 'EMPRESTIMO' ? '🏦 Passivo Empréstimo' : '💳 Passivo Parcela')} • Vence em <b>${dataBr}</b> • ${escapar(r.forma)}
+              <div style="font-weight:700; font-size:13.5px;">${escapar(r.descricao)}</div>
+              <div style="font-size:11px; color:var(--muted); margin-top:3px;">
+                ${escapar(r.categoria)} • Conta: <b>${escapar(r.contaOrigem)}</b>${r.contaDestino ? ' → <b>' + escapar(r.contaDestino) + '</b>' : ''} • Comp: ${r.dataCompetencia} • Status: <b>${r.status}</b>
               </div>
             </div>
             <div style="display:flex; align-items:center; gap:8px;">
-              <b style="color:${ehReceber ? '#5eead4' : 'var(--amber)'}; font-size:15px;">${moeda(val)}</b>
-              <button class="btn-baixar" onclick="darBaixaParcela('${r.id}')">${ehReceber ? '✓ Receber' : '✓ Pagar'}</button>
+              <b style="color:${corVal}; font-size:14px;">${sinal} ${moeda(val)}</b>
               <button class="btn-excluir" onclick="excluirRegistro('${r.id}')">✕</button>
             </div>
           </div>`;
       }
+    });
 
-      if (r.tipo === "EMPRESTIMO" || r.tipo === "CREDITO_EMPRESTIMO") {
-        const g = r.grupoId || r.descricao;
-        if (!gruposEmprestimos[g]) {
-          gruposEmprestimos[g] = {
-            nome: r.descricao.replace(/^Crédito Empréstimo:\s*/, "").replace(/\s*\(\d+\/\d+\)$/, ""),
-            creditoRecebido: 0,
-            totalContrato: 0,
-            totalPago: 0,
-            pagas: 0,
-            totalParcelas: r.totalParcelas || 1
-          };
-        }
-        if (r.tipo === "CREDITO_EMPRESTIMO") {
-          gruposEmprestimos[g].creditoRecebido += val;
-        } else {
-          gruposEmprestimos[g].totalContrato += val;
-          if (r.status === "PAGO") {
-            gruposEmprestimos[g].totalPago += val;
-            gruposEmprestimos[g].pagas += 1;
-          }
+    // 2. ATIVOS TOTAIS & PATRIMÔNIO LÍQUIDO (BALANÇO PATRIMONIAL)
+    let ativosTotais = 0;
+    let htmlConciliacao = "";
+
+    state.contas.forEach(c => {
+      const saldoCalc = saldosContas[c.nome] || 0;
+      ativosTotais += saldoCalc;
+      const diff = Number((saldoCalc - (Number(c.saldoExtratoReal) || 0)).toFixed(2));
+      const conciliado = Math.abs(diff) < 0.01;
+
+      htmlConciliacao += `
+        <div class="item-lista" style="border-left-color:${conciliado ? 'var(--green)' : 'var(--amber)'};">
+          <div>
+            <div style="font-weight:700; font-size:14px;">${escapar(c.nome)} <span style="font-size:10px; color:var(--muted);">(${c.grupo === 'ATIVO_INVESTIMENTO' ? 'Investimento/Bem' : 'Conta Circulante'})</span></div>
+            <div style="font-size:11.5px; color:var(--muted); margin-top:4px;">
+              Saldo Sistema: <b style="color:var(--blue);">${moeda(saldoCalc)}</b> | Extrato Banco: <b>${moeda(c.saldoExtratoReal)}</b>
+              ${conciliado
+                ? `<span style="color:var(--green); font-weight:700;"> • ✓ Conciliado</span>`
+                : `<span style="color:var(--amber); font-weight:700;"> • Diferença: ${moeda(diff)}</span>`}
+            </div>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button class="pill" style="color:var(--muted);" onclick="ajustarSaldoInicialPrompt('${escapar(c.nome)}', ${c.saldoInicial})">Saldo Ini.</button>
+            <button class="btn-baixar" onclick="conciliarContaPrompt('${escapar(c.nome)}', ${saldoCalc})">Conciliar</button>
+          </div>
+        </div>`;
+    });
+
+    const patrimonioLiquido = ativosTotais - passivosTotais;
+
+    document.getElementById("kpi-ativos").innerText = moeda(ativosTotais);
+    document.getElementById("kpi-passivos").innerText = moeda(passivosTotais);
+    document.getElementById("kpi-patrimonio").innerText = moeda(patrimonioLiquido);
+    document.getElementById("kpi-patrimonio").style.color = patrimonioLiquido >= 0 ? "var(--green)" : "var(--red)";
+
+    const badge = document.getElementById("contador-pagar");
+    badge.innerText = qtdPendentes;
+    badge.style.display = qtdPendentes > 0 ? "inline-block" : "none";
+
+    document.getElementById("lista-pendentes").innerHTML = htmlPendentes || "<p style='color:var(--muted); font-size:13px; text-align:center; padding:14px;'>Nenhum passivo pendente.</p>";
+    document.getElementById("lista-conciliacao").innerHTML = htmlConciliacao;
+    document.getElementById("lista-extrato").innerHTML = htmlExtrato || "<p style='color:var(--muted); font-size:13px; text-align:center; padding:14px;'>Nenhum lançamento encontrado.</p>";
+
+    // 3. EMPRÉSTIMOS
+    let htmlEmp = "";
+    Object.values(gruposEmprestimos).forEach(emp => {
+      const falta = emp.totalContrato - emp.pago;
+      const pct = Math.min(100, Math.round((emp.pago / (emp.totalContrato || 1)) * 100));
+      htmlEmp += `
+        <div class="card" style="background:var(--input); margin-bottom:10px;">
+          <div style="display:flex; justify-content:space-between; font-weight:700; font-size:13.5px;">
+            <span>🏦 ${escapar(emp.nome)}</span>
+            <span style="color:#c084fc;">${emp.pagas}/${emp.totalParc} (${pct}%)</span>
+          </div>
+          <div style="font-size:11px; color:var(--muted); margin-top:4px;">
+            Crédito recebido: <b style="color:var(--blue);">${moeda(emp.credito)}</b> • Total contrato: <b>${moeda(emp.totalContrato)}</b>
+          </div>
+          <div class="barra-progresso"><div class="barra-fill" style="width:${pct}%;"></div></div>
+          <div style="display:flex; justify-content:space-between; font-size:11.5px; color:var(--muted);">
+            <span>Amortizado: <b style="color:var(--green);">${moeda(emp.pago)}</b></span>
+            <span>Passivo Restante: <b style="color:var(--amber);">${moeda(falta)}</b></span>
+          </div>
+        </div>`;
+    });
+    document.getElementById("lista-emprestimos").innerHTML = htmlEmp || "<p style='color:var(--muted); font-size:13px; text-align:center; padding:14px;'>Nenhum empréstimo registrado.</p>";
+
+    // 4. DRE (CAIXA vs COMPETÊNCIA) & PRUDÊNCIA
+    const mesSel = document.getElementById("filtro-mes-dre").value;
+    const regimeSel = document.getElementById("regime-dre").value;
+
+    let recDre = 0, despFixaDre = 0, despVarDre = 0;
+    const gastosPorCatVariavel = {};
+
+    state.lancamentos.forEach(r => {
+      const nat = String(r.natureza || "").toUpperCase();
+      if (nat === "TRANSFERENCIA" || nat === "CREDITO_EMPRESTIMO") return; // Não são receitas nem despesas
+
+      const dataRef = regimeSel === "CAIXA" ? r.dataCaixa : r.dataCompetencia;
+      if (!dataRef || !dataRef.startsWith(mesSel)) return;
+      if (regimeSel === "CAIXA" && r.status !== "PAGO") return;
+      if (nat === "RECEITA" && r.segurancaReceita === "INCERTA" && r.status !== "PAGO") return; // Prudência
+
+      const val = Number(r.valor) || 0;
+      if (nat === "RECEITA") {
+        recDre += val;
+      } else {
+        if (r.tipoCusto === "FIXO") despFixaDre += val;
+        else {
+          despVarDre += val;
+          gastosPorCatVariavel[r.categoria] = (gastosPorCatVariavel[r.categoria] || 0) + val;
         }
       }
     });
 
-    const saldoReal = entradasCaixaTotais - saidasReais;
-    document.getElementById("kpi-saldo").innerText = moeda(saldoReal);
-    document.getElementById("kpi-saldo").style.color = saldoReal >= 0 ? "var(--blue)" : "var(--red)";
-    document.getElementById("kpi-entradas").innerText = moeda(receitasProprias);
-    document.getElementById("kpi-saidas").innerText = moeda(saidasReais);
-    document.getElementById("kpi-pendente").innerText = moeda(passivoTotal);
+    const resultadoDre = recDre - (despFixaDre + despVarDre);
+    document.getElementById("kpi-dre-mes").innerText = moeda(resultadoDre);
+    document.getElementById("kpi-dre-mes").style.color = resultadoDre >= 0 ? "var(--green)" : "var(--red)";
+    document.getElementById("kpi-dre-status").innerText = resultadoDre >= 0 ? "Superávit no mês" : "Déficit no mês";
 
-    const badge = document.getElementById("contador-pagar");
-    if (qtdPendentes > 0) {
-      badge.innerText = qtdPendentes;
-      badge.style.display = "inline-block";
-    } else {
-      badge.style.display = "none";
-    }
+    document.getElementById("conteudo-dre").innerHTML = `
+      <div class="dre-linha"><span>(+) Receitas Operacionais Confirmadas</span><b style="color:var(--green);">${moeda(recDre)}</b></div>
+      <div class="dre-linha"><span>(−) Custos e Despesas Fixas</span><b style="color:var(--red);">${moeda(despFixaDre)}</b></div>
+      <div class="dre-linha"><span>(−) Despesas Variáveis</span><b style="color:var(--red);">${moeda(despVarDre)}</b></div>
+      <div class="dre-linha" style="border-bottom:none; font-size:15px; padding-top:12px;">
+        <b>(=) Resultado Líquido (${regimeSel === 'CAIXA' ? 'Caixa' : 'Competência'})</b>
+        <b style="color:${resultadoDre >= 0 ? 'var(--green)' : 'var(--red)'};">${moeda(resultadoDre)} (${resultadoDre >= 0 ? 'SUPERÁVIT' : 'DÉFICIT'})</b>
+      </div>
+    `;
 
-    document.getElementById("lista-pendentes").innerHTML =
-      htmlPendentes || "<p style='color:var(--muted); font-size:13px; text-align:center; padding:16px;'>Nenhuma conta pendente.</p>";
+    // Prudência (Metas variáveis com margem de segurança para cima)
+    let htmlPrud = "";
+    const listaOrc = state.orcamentos.length > 0 ? state.orcamentos : [
+      { categoria: "Alimentação & Casa", base: 1000, margemPct: 15 },
+      { categoria: "Operacional / Contas", base: 800, margemPct: 10 },
+      { categoria: "Transporte & Veículo", base: 500, margemPct: 15 },
+      { categoria: "Lazer & Pessoal", base: 400, margemPct: 20 }
+    ];
 
-    document.getElementById("lista-extrato").innerHTML =
-      htmlExtrato || "<p style='color:var(--muted); font-size:13px; text-align:center; padding:16px;'>Nenhuma movimentação efetivada.</p>";
-
-    let htmlContas = "";
-    Object.entries(saldosPorConta).forEach(([nomeC, saldoC]) => {
-      htmlContas += `
-        <div class="item-lista">
-          <div style="font-weight:700; font-size:14px;">🏦 ${escapar(nomeC)}</div>
-          <b style="color:${saldoC >= 0 ? 'var(--blue)' : 'var(--red)'}; font-size:16px;">${moeda(saldoC)}</b>
+    listaOrc.forEach(o => {
+      const tetoPrudente = o.base * (1 + (o.margemPct / 100));
+      const gastoAtual = gastosPorCatVariavel[o.categoria] || 0;
+      const pct = Math.min(100, Math.round((gastoAtual / (tetoPrudente || 1)) * 100));
+      htmlPrud += `
+        <div style="margin-bottom:12px;">
+          <div style="display:flex; justify-content:space-between; font-size:12px;">
+            <span><b>${escapar(o.categoria)}</b> (Base: ${moeda(o.base)} + ${o.margemPct}% margem)</span>
+            <span>Gasto: <b>${moeda(gastoAtual)}</b> / Teto Prudente: <b style="color:var(--amber);">${moeda(tetoPrudente)}</b></span>
+          </div>
+          <div class="barra-progresso"><div class="barra-fill" style="width:${pct}%; background:${gastoAtual > tetoPrudente ? 'var(--red)' : 'var(--green)'};"></div></div>
         </div>`;
     });
-    document.getElementById("lista-saldos-contas").innerHTML =
-      htmlContas || "<p style='color:var(--muted); font-size:13px; text-align:center; padding:16px;'>Sem movimentação por conta ainda.</p>";
-
-    let htmlEmp = "";
-    Object.values(gruposEmprestimos).forEach(emp => {
-      const faltaPagar = emp.totalContrato - emp.totalPago;
-      const pct = Math.min(100, Math.round((emp.totalPago / (emp.totalContrato || 1)) * 100));
-      htmlEmp += `
-        <div class="card" style="background:var(--input); margin-bottom:10px;">
-          <div style="display:flex; justify-content:space-between; font-weight:700; font-size:14px;">
-            <span>🏦 ${escapar(emp.nome)}</span>
-            <span style="color:#c084fc;">${emp.pagas}/${emp.totalParcelas} pagas (${pct}%)</span>
-          </div>
-          <div style="font-size:11px; color:var(--muted); margin-top:4px;">
-            Crédito que entrou: <b style="color:var(--blue);">${moeda(emp.creditoRecebido)}</b> • Total a devolver: <b>${moeda(emp.totalContrato)}</b>
-          </div>
-          <div class="barra-progresso"><div class="barra-fill" style="width:${pct}%;"></div></div>
-          <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--muted); margin-top:6px;">
-            <span>Amortizado: <b style="color:var(--green);">${moeda(emp.totalPago)}</b></span>
-            <span>Passivo Restante: <b style="color:var(--amber);">${moeda(faltaPagar)}</b></span>
-          </div>
-        </div>`;
-    });
-    document.getElementById("lista-emprestimos").innerHTML =
-      htmlEmp || "<p style='color:var(--muted); font-size:13px; text-align:center; padding:16px;'>Nenhum empréstimo registrado.</p>";
+    document.getElementById("conteudo-prudencia").innerHTML = htmlPrud;
   }
 
+  /* ============================================================
+     NOTIFICAÇÕES NATIVAS NO VISOR DO CELULAR
+     ============================================================ */
   async function ativarNotificacoesVisor() {
     if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications) {
       const perm = await window.Capacitor.Plugins.LocalNotifications.requestPermissions();
       if (perm.display === "granted") {
         await agendarNotificacoesNativas();
-        alert("Notificações nativas ativadas! Os alertas aparecerão no visor às 08:00 no dia de cada vencimento.");
+        alert("Alertas no visor ativados! Você será notificado às 08:00 no dia de cada vencimento.");
       }
       return;
     }
-
     if ("Notification" in window) {
       const res = await Notification.requestPermission();
-      if (res === "granted") {
-        verificarAlertasNavegador();
-        alert("Notificações ativadas neste dispositivo!");
-      }
+      if (res === "granted") alert("Notificações ativadas neste navegador!");
     }
   }
 
-  function gerarIdNumerico_(str) {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-      hash = ((hash << 5) - hash) + str.charCodeAt(i);
-      hash |= 0;
-    }
-    return Math.abs(hash) % 2000000000;
+  function hashId_(str) {
+    let h = 0;
+    for (let i = 0; i < str.length; i++) { h = ((h << 5) - h) + str.charCodeAt(i); h |= 0; }
+    return Math.abs(h) % 2000000000;
   }
 
   async function agendarNotificacoesNativas() {
-    if (!(window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications)) {
-      verificarAlertasNavegador();
-      return;
-    }
-
+    if (!(window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications)) return;
     const LocalNotifications = window.Capacitor.Plugins.LocalNotifications;
-    const pendentes = registros.filter(r => r.status === "PENDENTE" && r.vencimento && r.tipo !== "A_RECEBER");
-    const notificacoes = [];
-
+    const pendentes = state.lancamentos.filter(r => r.status === "PENDENTE" && r.natureza !== "RECEITA" && r.dataVencimento);
+    const lista = [];
     pendentes.forEach(p => {
-      const [ano, mes, dia] = p.vencimento.split("-").map(Number);
-      const dataAlarme = new Date(ano, mes - 1, dia, 8, 0, 0);
-      if (dataAlarme > new Date()) {
-        notificacoes.push({
-          id: gerarIdNumerico_(p.id),
-          title: p.tipo === "EMPRESTIMO" ? "🏦 Parcela de Empréstimo Vence Hoje" : "💳 Boleto / Parcela Vence Hoje",
-          body: `${p.descricao} — Valor: ${moeda(p.valor)}. Toque para dar baixa após pagar.`,
-          schedule: { at: dataAlarme },
-          sound: null,
-          smallIcon: "ic_stat_icon_config_sample"
+      const [ano, mes, dia] = p.dataVencimento.split("-").map(Number);
+      const dt = new Date(ano, mes - 1, dia, 8, 0, 0);
+      if (dt > new Date()) {
+        lista.push({
+          id: hashId_(p.id),
+          title: p.natureza === "EMPRESTIMO" ? "🏦 Parcela de Empréstimo Vence Hoje" : "💳 Passivo / Boleto Vence Hoje",
+          body: `${p.descricao} — ${moeda(p.valor)} (${p.contaOrigem})`,
+          schedule: { at: dt }
         });
       }
     });
-
-    if (notificacoes.length > 0) {
-      await LocalNotifications.schedule({ notifications: notificacoes });
-    }
+    if (lista.length > 0) await LocalNotifications.schedule({ notifications: lista });
   }
 
   async function cancelarNotificacaoEspecifica(idStr) {
     if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications) {
-      await window.Capacitor.Plugins.LocalNotifications.cancel({
-        notifications: [{ id: gerarIdNumerico_(idStr) }]
-      });
+      await window.Capacitor.Plugins.LocalNotifications.cancel({ notifications: [{ id: hashId_(idStr) }] });
     }
   }
 
-  function verificarAlertasNavegador() {
-    if (!("Notification" in window) || Notification.permission !== "granted") return;
-    const hojeISO = new Date().toISOString().split("T")[0];
-    const vencendo = registros.filter(r => r.status === "PENDENTE" && r.tipo !== "A_RECEBER" && r.vencimento <= hojeISO);
-    if (vencendo.length > 0) {
-      new Notification(`⚠️ ${vencendo.length} passivo(s) aguardando pagamento`, {
-        body: `${vencendo[0].descricao} (${moeda(vencendo[0].valor)}) aguardando baixa.`
-      });
-    }
-  }
-
+  /* ============================================================
+     SINCRONIZAÇÃO BIDIRECIONAL CONTÍNUA COM O GOOGLE SHEETS
+     ============================================================ */
   function salvarLocal() {
-    localStorage.setItem("fin_real_registros", JSON.stringify(registros));
+    localStorage.setItem("fin360_state_v4", JSON.stringify(state));
   }
 
   async function enviarParaPlanilha(payload) {
+    const badge = document.getElementById("badge-sync");
+    badge.innerText = "↻ Gravando na Planilha...";
     try {
       await fetch(API_URL, {
         method: "POST",
         mode: "no-cors",
         body: JSON.stringify(payload)
       });
+      setTimeout(() => sincronizarComPlanilha(false), 1200);
     } catch (e) {
-      filaPendenteSync.push(payload);
-      localStorage.setItem("fin_real_fila", JSON.stringify(filaPendenteSync));
+      filaOffline.push(payload);
+      localStorage.setItem("fin360_fila_v4", JSON.stringify(filaOffline));
+      badge.innerText = "● Offline (Fila Local)";
     }
   }
 
-  async function sincronizarComPlanilha() {
+  async function sincronizarComPlanilha(manual) {
     const badge = document.getElementById("badge-sync");
-    badge.innerText = "↻ Sincronizando...";
+    if (manual) badge.innerText = "↻ Puxando da Planilha...";
 
-    if (filaPendenteSync.length > 0) {
-      const copia = [...filaPendenteSync];
-      filaPendenteSync = [];
-      localStorage.setItem("fin_real_fila", "[]");
-      for (const item of copia) {
-        await enviarParaPlanilha(item);
+    if (filaOffline.length > 0) {
+      const pendentes = [...filaOffline];
+      filaOffline = [];
+      localStorage.setItem("fin360_fila_v4", "[]");
+      for (const item of pendentes) {
+        await fetch(API_URL, { method: "POST", mode: "no-cors", body: JSON.stringify(item) });
       }
     }
 
     try {
-      const resp = await fetch(API_URL);
+      const resp = await fetch(API_URL + "?t=" + Date.now());
       const json = await resp.json();
-      if (json.status === "ok" && Array.isArray(json.registros)) {
-        registros = json.registros;
+      if (json.status === "ok") {
+        state.lancamentos = json.lancamentos || [];
+        if (json.contas && json.contas.length > 0) state.contas = json.contas;
+        if (json.orcamentos && json.orcamentos.length > 0) state.orcamentos = json.orcamentos;
         salvarLocal();
         agendarNotificacoesNativas();
         renderizarTudo();
-        badge.innerText = "● Nuvem Sincronizada";
+        badge.innerText = "● Planilha Sincronizada";
       }
     } catch (e) {
-      badge.innerText = "● Modo Offline (Salvo no Aparelho)";
+      badge.innerText = "● Modo Offline";
     }
   }
 
-  sincronizarComPlanilha();
+  // Sincroniza ao abrir, ao voltar para a aba e a cada 25 segundos para capturar edições manuais na planilha
+  selecionarTipo("DESPESA");
+  renderizarTudo();
+  sincronizarComPlanilha(false);
+  setInterval(() => sincronizarComPlanilha(false), 25000);
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) sincronizarComPlanilha(false);
+  });
 </script>
 </body>
 </html>
