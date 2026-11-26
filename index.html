@@ -1,727 +1,886 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Finanças 360º</title>
-  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#2563eb" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0b1120">
+  <title>Gerenciador Financeiro Real</title>
   <style>
     :root {
-      --bg-blue: #3b6ef6;
-      --bg-blue-dark: #254edb;
-      --card-blue: #2f5ee0;
-      --soft-panel: #dce6fc;
-      --white: #ffffff;
-      --text-dark: #0f172a;
-      --muted: #64748b;
-      --green: #16a34a;
-      --red: #dc2626;
+      --bg: #0b1120;
+      --card: #131c31;
+      --input: #090e1a;
+      --border: #1e293b;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --green: #10b981;
+      --red: #ef4444;
       --amber: #f59e0b;
+      --blue: #38bdf8;
+      --purple: #a855f7;
     }
 
-    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
 
     body {
-      margin: 0;
-      background: #1e3a8a;
-      color: var(--white);
-      display: flex;
-      justify-content: center;
-      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      padding-bottom: calc(82px + env(safe-area-inset-bottom, 0px));
     }
 
-    .phone-frame {
-      width: 100%;
-      max-width: 480px;
-      min-height: 100vh;
-      background: linear-gradient(180deg, #4b7cf8 0%, var(--bg-blue) 45%, var(--bg-blue-dark) 100%);
+    /* TOPO RESPONSIVO (PC E CELULAR) */
+    .topbar {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      padding: calc(16px + env(safe-area-inset-top, 0px)) 20px 18px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .topbar-inner {
+      max-width: 960px;
+      margin: 0 auto;
       display: flex;
-      flex-direction: column;
       justify-content: space-between;
-    }
-
-    .content {
-      padding: 16px 16px 84px;
-    }
-
-    .top-card {
-      background: var(--card-blue);
-      border-radius: 18px;
-      padding: 12px 16px;
-      display: flex;
       align-items: center;
-      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .topbar h1 { font-size: 19px; font-weight: 800; letter-spacing: 0.2px; }
+    .topbar p { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    .status-pills { display: flex; gap: 8px; align-items: center; }
+
+    .pill {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.7);
+      cursor: pointer;
+    }
+
+    .pill-online { color: #34d399; border-color: rgba(16, 185, 129, 0.35); }
+    .pill-notif { color: var(--blue); border-color: rgba(56, 189, 248, 0.35); }
+
+    .wrapper {
+      max-width: 960px;
+      margin: 18px auto;
+      padding: 0 14px;
+    }
+
+    /* CARDS DE RESUMO CONTÁBIL REAL */
+    .resumo-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
       margin-bottom: 18px;
     }
 
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 12px;
+    @media (max-width: 760px) {
+      .resumo-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
 
-    .avatar {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.2);
-      display: grid;
-      place-items: center;
-      font-weight: 700;
-      font-size: 1rem;
-    }
-
-    .top-card small { display: block; opacity: 0.85; font-size: 0.78rem; }
-    .top-card strong { font-size: 1rem; }
-
-    .icon-btn {
-      background: rgba(255,255,255,0.16);
-      border: none;
-      color: var(--white);
-      border-radius: 10px;
-      padding: 8px 10px;
-      font-size: 0.85rem;
-      cursor: pointer;
-    }
-
-    .wallet-label { font-size: 0.88rem; opacity: 0.9; margin-bottom: 4px; }
-    .wallet-value { font-size: 2rem; font-weight: 800; margin: 0 0 16px; letter-spacing: -0.5px; }
-
-    .summary-box {
-      background: var(--soft-panel);
-      color: var(--text-dark);
-      border-radius: 16px;
-      padding: 14px 10px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      margin-bottom: 16px;
-    }
-
-    .summary-col { text-align: center; }
-    .summary-col:first-child { border-right: 1px solid rgba(15, 23, 42, 0.14); }
-    .summary-col small { display: block; color: var(--muted); font-size: 0.78rem; margin-bottom: 4px; }
-    .val-in { color: var(--green); font-weight: 800; font-size: 1.05rem; }
-    .val-out { color: var(--red); font-weight: 800; font-size: 1.05rem; }
-
-    .choice-title {
-      font-size: 0.88rem;
-      opacity: 0.92;
-      margin: 4px 0 10px;
-      font-weight: 600;
-    }
-
-    .quick-actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-
-    .action-btn {
-      border: none;
+    .kpi-card {
+      background: var(--card);
+      border: 1px solid var(--border);
       border-radius: 14px;
-      padding: 15px 12px;
-      color: var(--white);
-      font-weight: 700;
-      font-size: 0.92rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
+      padding: 14px;
     }
 
-    .btn-receita { background: var(--green); }
-    .btn-despesa { background: var(--red); }
+    .kpi-label { font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; }
+    .kpi-val { font-size: clamp(17px, 4vw, 21px); font-weight: 800; margin-top: 6px; }
+    .kpi-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
 
-    .panel {
-      background: var(--card-blue);
-      border-radius: 18px;
-      padding: 16px;
+    /* MENU DE NAVEGAÇÃO (ABAS NO PC E BARRA FIXA NO CELULAR) */
+    .nav-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      background: var(--card);
+      padding: 6px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 10px 8px;
+      border: none;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .tab-btn.ativo {
+      background: #1e293b;
+      color: var(--text);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    }
+
+    .badge-count {
+      background: var(--red);
+      color: #fff;
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 999px;
+      margin-left: 4px;
+    }
+
+    .secao { display: none; }
+    .secao.ativa { display: block; }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
       margin-bottom: 14px;
     }
 
-    .panel h3 {
-      margin: 0 0 12px;
-      font-size: 0.98rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .btn-fechar {
-      background: rgba(255,255,255,0.16);
-      border: none;
-      color: var(--white);
-      border-radius: 8px;
-      padding: 4px 9px;
-      font-size: 0.78rem;
-      cursor: pointer;
-    }
-
-    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .field { margin-bottom: 12px; }
-    .field label { display: block; font-size: 0.78rem; opacity: 0.9; margin-bottom: 4px; }
-    .field input, .field select {
-      width: 100%;
-      padding: 10px 12px;
-      border-radius: 10px;
-      border: none;
-      background: var(--white);
-      color: var(--text-dark);
-      font-size: 0.92rem;
-    }
-
-    .btn-save {
-      width: 100%;
-      padding: 13px;
-      border: none;
-      border-radius: 12px;
-      background: #10b981;
-      color: var(--white);
-      font-weight: 800;
-      font-size: 0.95rem;
-      cursor: pointer;
-    }
-
-    .recent-item {
-      background: rgba(255,255,255,0.1);
-      border-radius: 12px;
-      padding: 11px 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-
-    .recent-item:last-child { margin-bottom: 0; }
-    .recent-left strong { display: block; font-size: 0.92rem; }
-    .recent-left small { opacity: 0.8; font-size: 0.76rem; }
-    .recent-right { text-align: right; font-weight: 700; font-size: 0.92rem; }
-    .recent-right small { display: block; font-weight: 500; font-size: 0.75rem; opacity: 0.85; }
-
-    .badge-pendente {
-      display: inline-block;
-      background: #fef3c7;
-      color: #92400e;
-      font-size: 0.68rem;
+    .card-header {
+      font-size: 14px;
       font-weight: 700;
-      padding: 2px 6px;
-      border-radius: 6px;
-      margin-left: 6px;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    .toast {
-      margin-top: 10px;
-      padding: 10px;
-      border-radius: 10px;
-      font-size: 0.84rem;
-      text-align: center;
-      display: none;
-      font-weight: 600;
-    }
-
-    .toast.ok { display: block; background: #dcfce7; color: #166534; }
-    .toast.warn { display: block; background: #fef3c7; color: #92400e; }
-
-    .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      max-width: 480px;
-      background: #1d4ed8;
+    /* SELETOR DE TIPO DE OPERAÇÃO */
+    .tipo-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      padding: 8px 12px;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 8px;
+      margin-bottom: 12px;
     }
 
-    .nav-btn {
+    @media (max-width: 600px) {
+      .tipo-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    .tipo-opt {
+      padding: 12px 8px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border);
+      background: var(--input);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .tipo-opt.sel-receita { border-color: var(--green); color: #34d399; background: rgba(16, 185, 129, 0.1); }
+    .tipo-opt.sel-despesa { border-color: var(--red); color: #f87171; background: rgba(239, 68, 68, 0.1); }
+    .tipo-opt.sel-parcelado { border-color: var(--amber); color: #fbbf24; background: rgba(245, 158, 11, 0.1); }
+    .tipo-opt.sel-emprestimo { border-color: var(--purple); color: #c084fc; background: rgba(168, 85, 247, 0.1); }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    @media (max-width: 600px) {
+      .form-grid { grid-template-columns: 1fr; gap: 0; }
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 600;
+      margin: 12px 0 5px 0;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border);
+      background: var(--input);
+      color: var(--text);
+      font-size: 15px;
+    }
+
+    input:focus, select:focus { outline: none; border-color: var(--blue); }
+
+    .box-coerencia {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      font-size: 12px;
+      color: #bae6fd;
+      line-height: 1.5;
+    }
+
+    .btn-submit {
+      width: 100%;
+      margin-top: 16px;
+      padding: 14px;
       border: none;
       border-radius: 12px;
-      padding: 10px;
-      background: transparent;
-      color: rgba(255,255,255,0.78);
-      font-weight: 700;
-      font-size: 0.86rem;
+      background: linear-gradient(135deg, #0284c7, #38bdf8);
+      color: #082f49;
+      font-size: 14px;
+      font-weight: 800;
       cursor: pointer;
     }
 
-    .nav-btn.active {
-      background: var(--amber);
-      color: var(--text-dark);
+    .item-lista {
+      background: var(--input);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--blue);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
     }
 
-    .hidden { display: none; }
-    .config-box { display: none; background: rgba(15, 23, 42, 0.35); padding: 12px; border-radius: 12px; margin-bottom: 14px; }
-    .config-box.open { display: block; }
+    .item-lista.pago-receita { border-left-color: var(--green); }
+    .item-lista.pago-despesa { border-left-color: var(--red); }
+    .item-lista.vencido { border-left-color: var(--red); background: rgba(239, 68, 68, 0.06); }
+    .item-lista.pendente { border-left-color: var(--amber); }
+
+    .btn-baixar {
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: none;
+      background: var(--green);
+      color: #052e16;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .btn-excluir {
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      background: transparent;
+      color: #f87171;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .barra-progresso {
+      width: 100%;
+      height: 8px;
+      background: #1e293b;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 8px 0;
+    }
+
+    .barra-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #a855f7, #10b981);
+    }
   </style>
 </head>
 <body>
-  <div class="phone-frame">
-    <div class="content">
-      <div class="top-card">
-        <div class="user-info">
-          <div class="avatar">A</div>
-          <div>
-            <small>Bem-vindo,</small>
-            <strong>Alexandre</strong>
-          </div>
-        </div>
-        <div style="display:flex; gap:6px;">
-          <button type="button" class="icon-btn" onclick="sincronizarTudo(true)">↻</button>
-          <button type="button" class="icon-btn" onclick="toggleConfig()">⚙️</button>
-        </div>
+
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div>
+        <h1>Controle Financeiro Real</h1>
+        <p>Caixa efetivo, boletos programados e gestão de empréstimos</p>
       </div>
-
-      <div id="configBox" class="config-box">
-        <div class="field">
-          <label>URL do Web App (Apps Script)</label>
-          <input type="url" id="apiUrl" />
-        </div>
-        <div class="field">
-          <label>Token</label>
-          <input type="text" id="apiToken" />
-        </div>
-        <button type="button" class="btn-save" onclick="salvarConfig()">Salvar</button>
+      <div class="status-pills">
+        <button class="pill pill-notif" onclick="ativarNotificacoesVisor()">🔔 Ativar Alertas no Visor</button>
+        <div id="badge-sync" class="pill pill-online" onclick="sincronizarComPlanilha()">● Nuvem Sincronizada</div>
       </div>
-
-      <div id="viewInicio">
-        <div class="wallet-label">Carteira Total</div>
-        <h1 id="saldoTotal" class="wallet-value">R$ 0,00</h1>
-
-        <div class="summary-box">
-          <div class="summary-col">
-            <small>Receita</small>
-            <span id="totalReceita" class="val-in">+ R$ 0,00</span>
-          </div>
-          <div class="summary-col">
-            <small>Despesas</small>
-            <span id="totalDespesa" class="val-out">- R$ 0,00</span>
-          </div>
-        </div>
-
-        <div class="choice-title">O que você deseja registrar?</div>
-        <div class="quick-actions">
-          <button type="button" class="action-btn btn-receita" onclick="abrirFormularioTipo('ENTRADA')">
-            ↗ Adicionar Receita
-          </button>
-          <button type="button" class="action-btn btn-despesa" onclick="abrirFormularioTipo('SAÍDA')">
-            ↘ Adicionar Despesa
-          </button>
-        </div>
-
-        <div id="toast" class="toast"></div>
-
-        <form id="formLancamento" class="panel hidden">
-          <h3>
-            <span id="tituloForm">Novo Lançamento</span>
-            <button type="button" class="btn-fechar" onclick="fecharFormulario()">✕ Fechar</button>
-          </h3>
-
-          <div class="row-2">
-            <div class="field">
-              <label>Valor (R$)</label>
-              <input type="number" id="valor" step="0.01" min="0.01" placeholder="0,00" required />
-            </div>
-            <div class="field">
-              <label>Categoria</label>
-              <select id="categoria" required></select>
-            </div>
-          </div>
-
-          <div class="row-2">
-            <div class="field">
-              <label>Forma de Pagamento</label>
-              <select id="formaPagamento" required>
-                <option value="PIX">PIX</option>
-                <option value="Cartão de Crédito">Cartão de Crédito</option>
-                <option value="Cartão de Débito">Cartão de Débito</option>
-                <option value="Dinheiro">Dinheiro</option>
-                <option value="Transferência (TED/DOC)">Transferência (TED/DOC)</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>Instituição</label>
-              <select id="instituicao" required>
-                <option value="Banco Inter">Banco Inter</option>
-                <option value="Banco do Brasil">Banco do Brasil</option>
-                <option value="Mercado Pago">Mercado Pago</option>
-                <option value="Dinheiro em Espécie">Dinheiro em Espécie</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="field">
-            <label>Descrição</label>
-            <input type="text" id="descricao" placeholder="Ex.: Mercado, Salário..." required />
-          </div>
-
-          <button type="submit" id="btnSalvar" class="btn-save">Salvar Rápido</button>
-        </form>
-      </div>
-
-      <div id="viewUltimos5" class="hidden">
-        <div class="panel">
-          <h3>
-            <span>Últimos 5 Lançamentos</span>
-            <button type="button" class="icon-btn" onclick="sincronizarTudo(true)">Atualizar</button>
-          </h3>
-          <div id="listaUltimos5"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="bottom-nav">
-      <button type="button" id="navInicio" class="nav-btn active" onclick="mudarAba('inicio')">🏠 Início</button>
-      <button type="button" id="navUltimos5" class="nav-btn" onclick="mudarAba('ultimos5')">📋 Últimos 5</button>
     </div>
   </div>
 
-  <script>
-    const DEFAULT_API_URL = "https://script.google.com/macros/s/AKfycbxDkkkLz7yJ3ugczlSVzwM3S6qHb4N6TdfeX9BSiVm_6XJlinhIuF-aPxXt3j227w5ctw/exec";
-    const DEFAULT_TOKEN = "WORKANA_FIN_2026";
+  <div class="wrapper">
 
-    let tipoSelecionado = null;
-    const categoriasPorTipo = {
-      "ENTRADA": ["Salário", "Freelance / Consultoria", "Dividendos & Investimentos", "Outras Receitas"],
-      "SAÍDA": ["Alimentação & Supermercado", "Moradia & Contas", "Transporte & Combustível", "Saúde & Bem-estar", "Lazer & Restaurantes", "Compras Pessoais"]
-    };
+    <!-- RESUMO CONTÁBIL COERENTE -->
+    <div class="resumo-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Saldo Real em Caixa</div>
+        <div id="kpi-saldo" class="kpi-val" style="color:var(--blue);">R$ 0,00</div>
+        <div class="kpi-sub">Entradas pagas − Saídas pagas</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Entradas Confirmadas</div>
+        <div id="kpi-entradas" class="kpi-val" style="color:var(--green);">R$ 0,00</div>
+        <div class="kpi-sub">Dinheiro efetivamente recebido</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Saídas Reais (Despesas)</div>
+        <div id="kpi-saidas" class="kpi-val" style="color:var(--red);">R$ 0,00</div>
+        <div class="kpi-sub">Somente o que já foi pago</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">A Pagar (Boletos / Empr.)</div>
+        <div id="kpi-pendente" class="kpi-val" style="color:var(--amber);">R$ 0,00</div>
+        <div class="kpi-sub">Compromissos futuros em aberto</div>
+      </div>
+    </div>
 
-    function obterDataEHoraDoMomento() {
-      const agora = new Date();
-      const ano = agora.getFullYear();
-      const mes = String(agora.getMonth() + 1).padStart(2, "0");
-      const dia = String(agora.getDate()).padStart(2, "0");
-      const hh = String(agora.getHours()).padStart(2, "0");
-      const mm = String(agora.getMinutes()).padStart(2, "0");
-      return {
-        dataIso: `${ano}-${mes}-${dia}`,
-        dataBr: `${dia}/${mes}/${ano}`,
-        horaStr: `${hh}:${mm}`,
-        timestamp: agora.getTime()
-      };
-    }
+    <!-- ABAS DE NAVEGAÇÃO -->
+    <div class="nav-tabs">
+      <button id="btn-tab-lancar" class="tab-btn ativo" onclick="abrirAba('lancar', this)">➕ Lançar / Programar</button>
+      <button id="btn-tab-pagar" class="tab-btn" onclick="abrirAba('pagar', this)">
+        🔔 A Pagar <span id="contador-pagar" class="badge-count" style="display:none;">0</span>
+      </button>
+      <button id="btn-tab-emprestimos" class="tab-btn" onclick="abrirAba('emprestimos', this)">🏦 Empréstimos</button>
+      <button id="btn-tab-extrato" class="tab-btn" onclick="abrirAba('extrato', this)">📊 Extrato Real</button>
+    </div>
 
-    document.addEventListener("DOMContentLoaded", () => {
-      const urlSalva = localStorage.getItem("fin_api_url");
-      const urlFinal = (!urlSalva || urlSalva.includes("AKfycbwn21c0G8CFaS4jKKHQBcOerg4duIC57LtnbVXZq3_3umV0X8cGg0UrujBUsHfpm1zNwA"))
-        ? DEFAULT_API_URL
-        : urlSalva;
-      localStorage.setItem("fin_api_url", urlFinal);
+    <!-- ABA 1: LANÇAMENTO -->
+    <div id="aba-lancar" class="secao ativa">
+      <div class="card">
+        <div class="card-header">
+          <span>Novo Registro Financeiro</span>
+        </div>
 
-      document.getElementById("apiUrl").value = urlFinal;
-      document.getElementById("apiToken").value = localStorage.getItem("fin_api_token") || DEFAULT_TOKEN;
+        <label>Escolha o tipo de movimentação:</label>
+        <div class="tipo-grid">
+          <div id="opt-DESPESA" class="tipo-opt sel-despesa" onclick="selecionarTipo('DESPESA')">💸 Saída Real (À Vista)</div>
+          <div id="opt-RECEITA" class="tipo-opt" onclick="selecionarTipo('RECEITA')">💰 Entrada Real</div>
+          <div id="opt-PARCELADO" class="tipo-opt" onclick="selecionarTipo('PARCELADO')">💳 Cartão / Boleto Prog.</div>
+          <div id="opt-EMPRESTIMO" class="tipo-opt" onclick="selecionarTipo('EMPRESTIMO')">🏦 Empréstimo</div>
+        </div>
 
-      renderizarCacheNaTela();
-      sincronizarTudo(false);
-    });
+        <div class="form-grid">
+          <div>
+            <label>Descrição *</label>
+            <input type="text" id="descricao" placeholder="Ex: Conta de Energia, Compra Peças, Empréstimo BB...">
+          </div>
+          <div>
+            <label>Categoria</label>
+            <select id="categoria">
+              <option value="Operacional / Contas">Operacional / Contas</option>
+              <option value="Alimentação & Casa">Alimentação & Casa</option>
+              <option value="Cartão de Crédito">Cartão de Crédito</option>
+              <option value="Boletos / Fornecedores">Boletos / Fornecedores</option>
+              <option value="Empréstimo / Financiamento">Empréstimo / Financiamento</option>
+              <option value="Salário / Pró-labore">Salário / Pró-labore</option>
+              <option value="Serviços / Vendas">Serviços / Vendas</option>
+            </select>
+          </div>
+        </div>
 
-    window.addEventListener("online", () => {
-      sincronizarTudo(true);
-    });
+        <div class="form-grid">
+          <div>
+            <label id="label-valor">Valor Pago Hoje (R$) *</label>
+            <input type="number" id="valor" step="0.01" inputmode="decimal" placeholder="0,00" oninput="atualizarExplicacaoLogica()">
+          </div>
+          <div>
+            <label id="label-data">Data da Movimentação *</label>
+            <input type="date" id="dataVencimento">
+          </div>
+        </div>
 
-    function getConfigAtiva() {
-      return {
-        url: (document.getElementById("apiUrl").value || localStorage.getItem("fin_api_url") || DEFAULT_API_URL).trim(),
-        token: (document.getElementById("apiToken").value || localStorage.getItem("fin_api_token") || DEFAULT_TOKEN).trim()
-      };
-    }
-
-    function mudarAba(aba) {
-      const isInicio = aba === "inicio";
-      document.getElementById("viewInicio").classList.toggle("hidden", !isInicio);
-      document.getElementById("viewUltimos5").classList.toggle("hidden", isInicio);
-      document.getElementById("navInicio").classList.toggle("active", isInicio);
-      document.getElementById("navUltimos5").classList.toggle("active", !isInicio);
-      if (isInicio) fecharFormulario();
-      if (!isInicio) renderizarUltimos5();
-    }
-
-    function abrirFormularioTipo(tipo) {
-      tipoSelecionado = tipo;
-      document.getElementById("tituloForm").textContent =
-        tipo === "ENTRADA" ? "Nova Receita (+)" : "Nova Despesa (-)";
-      const selCat = document.getElementById("categoria");
-      selCat.innerHTML = (categoriasPorTipo[tipo] || [])
-        .map(c => `<option value="${c}">${c}</option>`).join("");
-      document.getElementById("formLancamento").classList.remove("hidden");
-      document.getElementById("valor").focus();
-    }
-
-    function fecharFormulario() {
-      tipoSelecionado = null;
-      document.getElementById("formLancamento").classList.add("hidden");
-    }
-
-    function toggleConfig() {
-      document.getElementById("configBox").classList.toggle("open");
-    }
-
-    function salvarConfig() {
-      const cfg = getConfigAtiva();
-      localStorage.setItem("fin_api_url", cfg.url);
-      localStorage.setItem("fin_api_token", cfg.token);
-      mostrarToast("Configuração salva!", "ok");
-      sincronizarTudo(true);
-    }
-
-    function formatarMoeda(v) {
-      return Number(v || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-    }
-
-    function chaveOrdenacao(item) {
-      let dataParte = "1970-01-01";
-      let horaParte = item.hora && /^\d{2}:\d{2}$/.test(item.hora) ? `${item.hora}:00` : "00:00:00";
-
-      if (item.dataIso && /^\d{4}-\d{2}-\d{2}$/.test(item.dataIso)) {
-        dataParte = item.dataIso;
-      } else if (item.data && /^\d{2}\/\d{2}\/\d{4}$/.test(item.data)) {
-        const [d, m, a] = item.data.split("/");
-        dataParte = `${a}-${m}-${d}`;
-      }
-
-      const ts = new Date(`${dataParte}T${horaParte}`).getTime() || 0;
-      return ts + (Number(item.criadoEm || 0) % 60000);
-    }
-
-    function renderizarCacheNaTela() {
-      const resumo = JSON.parse(localStorage.getItem("fin_resumo_cache") || '{"saldo":0,"receita":0,"despesa":0}');
-      document.getElementById("saldoTotal").textContent = formatarMoeda(resumo.saldo);
-      document.getElementById("totalReceita").textContent = `+ ${formatarMoeda(resumo.receita)}`;
-      document.getElementById("totalDespesa").textContent = `- ${formatarMoeda(resumo.despesa)}`;
-      renderizarUltimos5();
-    }
-
-    function obterListaOrganizadaUltimos5() {
-      const fila = JSON.parse(localStorage.getItem("fin_fila_pendente") || "[]");
-      const remotos = JSON.parse(localStorage.getItem("fin_recentes_remotos") || "[]");
-
-      const combinados = [
-        ...fila.map(item => ({ ...item, pendente: true })),
-        ...remotos.map(item => ({ ...item, pendente: false }))
-      ];
-
-      const mapaUnico = new Map();
-      for (const item of combinados) {
-        const chave = item.localId || item.id || `${item.data}|${item.hora || ""}|${item.descricao}|${item.valor}`;
-        if (!mapaUnico.has(chave)) {
-          mapaUnico.set(chave, item);
-        }
-      }
-
-      return Array.from(mapaUnico.values())
-        .sort((a, b) => chaveOrdenacao(b) - chaveOrdenacao(a))
-        .slice(0, 5);
-    }
-
-    function renderizarUltimos5() {
-      const lista = obterListaOrganizadaUltimos5();
-      const container = document.getElementById("listaUltimos5");
-      if (!lista.length) {
-        container.innerHTML = `<p style="opacity:0.8;font-size:0.86rem;margin:0;">Nenhum lançamento recente encontrado.</p>`;
-        return;
-      }
-      container.innerHTML = lista.map(item => {
-        const isEntrada = String(item.tipo).toUpperCase() === "ENTRADA";
-        const sinal = isEntrada ? "+" : "-";
-        const cor = isEntrada ? "#86efac" : "#fca5a5";
-        const badge = item.pendente ? `<span class="badge-pendente">Na fila</span>` : "";
-        const horarioTexto = item.hora ? ` às ${item.hora}` : "";
-        return `
-          <div class="recent-item">
-            <div class="recent-left">
-              <strong>${item.descricao || item.categoria}${badge}</strong>
-              <small>${item.data}${horarioTexto} • ${item.formaPagamento || item.instituicao || ""}</small>
+        <!-- CAMPOS ESPECÍFICOS PARA PARCELAMENTO / BOLETOS / EMPRÉSTIMO -->
+        <div id="box-parcelas" style="display:none;">
+          <div class="form-grid">
+            <div>
+              <label>Quantidade de Parcelas / Boletos *</label>
+              <input type="number" id="qtdParcelas" min="1" max="120" value="3" oninput="atualizarExplicacaoLogica()">
             </div>
-            <div class="recent-right" style="color:${cor};">
-              ${sinal} ${formatarMoeda(item.valor)}
-              <small>${item.categoria || ""}</small>
+            <div>
+              <label>O valor digitado acima é:</label>
+              <select id="modoValorParcela" onchange="atualizarExplicacaoLogica()">
+                <option value="TOTAL">O valor TOTAL da compra/contrato</option>
+                <option value="PARCELA">O valor de CADA parcela</option>
+              </select>
             </div>
           </div>
-        `;
-      }).join("");
+        </div>
+
+        <div id="explicacao-logica" class="box-coerencia">
+          💸 <b>Saída Real:</b> Este valor será abatido imediatamente do seu Saldo em Caixa e contabilizado como despesa efetiva.
+        </div>
+
+        <button class="btn-submit" onclick="registrarLancamento()">SALVAR E SINCRONIZAR</button>
+      </div>
+    </div>
+
+    <!-- ABA 2: BOLETOS E PARCELAS PENDENTES -->
+    <div id="aba-pagar" class="secao">
+      <div class="card">
+        <div class="card-header">
+          <span>🔔 Compromissos Programados (Notificação Ativa)</span>
+        </div>
+        <p style="font-size:12px; color:var(--muted); margin-bottom:14px;">
+          Enquanto você não confirmar o pagamento abaixo, o aplicativo mantém o alerta agendado no visor do celular e não abate o valor do seu caixa.
+        </p>
+        <div id="lista-pendentes"></div>
+      </div>
+    </div>
+
+    <!-- ABA 3: EMPRÉSTIMOS EM ANDAMENTO -->
+    <div id="aba-emprestimos" class="secao">
+      <div class="card">
+        <div class="card-header">
+          <span>🏦 Controle de Empréstimos & Amortização</span>
+        </div>
+        <div id="lista-emprestimos"></div>
+      </div>
+    </div>
+
+    <!-- ABA 4: EXTRATO REAL (SOMENTE MOVIMENTAÇÕES EFETIVADAS) -->
+    <div id="aba-extrato" class="secao">
+      <div class="card">
+        <div class="card-header">
+          <span>📊 Histórico de Entradas e Saídas Reais</span>
+          <button class="pill pill-online" onclick="sincronizarComPlanilha()">↻ Atualizar da Planilha</button>
+        </div>
+        <div id="lista-extrato"></div>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+  const API_URL = "https://script.google.com/macros/s/AKfycbxDkkkLz7yJ3ugczlSVzwM3S6qHb4N6TdfeX9BSiVm_6XJlinhIuF-aPxXt3j227w5ctw/exec";
+
+  let registros = JSON.parse(localStorage.getItem("fin_real_registros") || "[]");
+  let filaPendenteSync = JSON.parse(localStorage.getItem("fin_real_fila") || "[]");
+  let tipoAtual = "DESPESA";
+
+  document.getElementById("dataVencimento").valueAsDate = new Date();
+
+  function moeda(v) {
+    return "R$ " + Number(v || 0).toFixed(2).replace(".", ",");
+  }
+
+  function escapar(s) {
+    return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  function abrirAba(nome, btn) {
+    document.querySelectorAll(".secao").forEach(s => s.classList.remove("ativa"));
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("ativo"));
+    document.getElementById("aba-" + nome).classList.add("ativa");
+    if (btn) btn.classList.add("ativo");
+    renderizarTudo();
+  }
+
+  function selecionarTipo(tipo) {
+    tipoAtual = tipo;
+    ["DESPESA", "RECEITA", "PARCELADO", "EMPRESTIMO"].forEach(t => {
+      const el = document.getElementById("opt-" + t);
+      el.className = "tipo-opt" + (t === tipo ? " sel-" + t.toLowerCase() : "");
+    });
+
+    const boxParcelas = document.getElementById("box-parcelas");
+    const labelValor = document.getElementById("label-valor");
+    const labelData = document.getElementById("label-data");
+
+    if (tipo === "PARCELADO" || tipo === "EMPRESTIMO") {
+      boxParcelas.style.display = "block";
+      labelValor.innerText = "Valor (R$) *";
+      labelData.innerText = "Vencimento da 1ª Parcela *";
+    } else if (tipo === "RECEITA") {
+      boxParcelas.style.display = "none";
+      labelValor.innerText = "Valor Recebido Hoje (R$) *";
+      labelData.innerText = "Data do Recebimento *";
+    } else {
+      boxParcelas.style.display = "none";
+      labelValor.innerText = "Valor Pago Hoje (R$) *";
+      labelData.innerText = "Data do Pagamento *";
+    }
+    atualizarExplicacaoLogica();
+  }
+
+  function atualizarExplicacaoLogica() {
+    const box = document.getElementById("explicacao-logica");
+    const val = parseFloat(document.getElementById("valor").value) || 0;
+    const qtd = parseInt(document.getElementById("qtdParcelas").value) || 1;
+    const modo = document.getElementById("modoValorParcela").value;
+
+    if (tipoAtual === "DESPESA") {
+      box.innerHTML = `💸 <b>Saída Real:</b> Abate <b>${moeda(val)}</b> imediatamente do seu Saldo em Caixa.`;
+    } else if (tipoAtual === "RECEITA") {
+      box.innerHTML = `💰 <b>Entrada Real:</b> Soma <b>${moeda(val)}</b> imediatamente ao seu Saldo Disponível.`;
+    } else if (tipoAtual === "PARCELADO") {
+      const vParc = modo === "TOTAL" ? (val / qtd) : val;
+      box.innerHTML = `💳 <b>Programação Coerente:</b> Não desconta nada do seu saldo hoje. Gera <b>${qtd}x de ${moeda(vParc)}</b> em "A Pagar" com notificação no visor no dia de cada vencimento.`;
+    } else if (tipoAtual === "EMPRESTIMO") {
+      const vParc = modo === "TOTAL" ? (val / qtd) : val;
+      const vTotal = modo === "TOTAL" ? val : (val * qtd);
+      box.innerHTML = `🏦 <b>Controle de Empréstimo:</b> Programa <b>${qtd} parcelas de ${moeda(vParc)}</b> (Total: ${moeda(vTotal)}). Cada baixa reduz o saldo devedor e registra a saída real no dia do pagamento.`;
+    }
+  }
+
+  async function registrarLancamento() {
+    const descricao = document.getElementById("descricao").value.trim();
+    const categoria = document.getElementById("categoria").value;
+    const valorDigitado = parseFloat(document.getElementById("valor").value) || 0;
+    const dataBase = document.getElementById("dataVencimento").value;
+
+    if (!descricao || valorDigitado <= 0 || !dataBase) {
+      alert("Preencha a descrição, um valor maior que zero e a data.");
+      return;
     }
 
-    async function enviarRegistroServidor(url, registro) {
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), 8000);
-      try {
-        const res = await fetch(url, {
-          method: "POST",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify(registro),
-          signal: controller.signal
+    const novosItens = [];
+    const grupoId = "GRP-" + Date.now();
+
+    if (tipoAtual === "DESPESA" || tipoAtual === "RECEITA") {
+      novosItens.push({
+        id: "LNC-" + Date.now(),
+        dataLancamento: new Date().toLocaleDateString("pt-BR"),
+        vencimento: dataBase,
+        dataPagamento: new Date().toLocaleDateString("pt-BR"),
+        tipo: tipoAtual,
+        categoria: categoria,
+        descricao: descricao,
+        valor: valorDigitado,
+        status: "PAGO",
+        grupoId: grupoId,
+        parcelaAtual: 1,
+        totalParcelas: 1,
+        forma: tipoAtual === "RECEITA" ? "Entrada Direta" : "Pagamento à Vista"
+      });
+    } else {
+      const qtd = Math.max(1, parseInt(document.getElementById("qtdParcelas").value) || 1);
+      const modo = document.getElementById("modoValorParcela").value;
+      const valorParcela = modo === "TOTAL" ? Number((valorDigitado / qtd).toFixed(2)) : valorDigitado;
+
+      const [ano, mes, dia] = dataBase.split("-").map(Number);
+
+      for (let i = 0; i < qtd; i++) {
+        const dtVenc = new Date(ano, (mes - 1) + i, dia);
+        const isoVenc = dtVenc.toISOString().split("T")[0];
+
+        novosItens.push({
+          id: "PARC-" + Date.now() + "-" + (i + 1),
+          dataLancamento: new Date().toLocaleDateString("pt-BR"),
+          vencimento: isoVenc,
+          dataPagamento: "",
+          tipo: tipoAtual,
+          categoria: categoria,
+          descricao: `${descricao} (${i + 1}/${qtd})`,
+          valor: valorParcela,
+          status: "PENDENTE",
+          grupoId: grupoId,
+          parcelaAtual: i + 1,
+          totalParcelas: qtd,
+          forma: tipoAtual === "EMPRESTIMO" ? "Parcela Empréstimo" : "Cartão / Boleto"
         });
-        clearTimeout(timer);
-        if (!res.ok) throw new Error("Falha HTTP " + res.status);
-        const data = await res.json();
-        if (data && data.status !== "success") {
-          throw new Error(data.message || "Erro no Apps Script");
-        }
-        return true;
-      } catch (err) {
-        clearTimeout(timer);
-        try {
-          await fetch(url, {
-            method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "text/plain;charset=utf-8" },
-            body: JSON.stringify(registro)
-          });
-          return true;
-        } catch (e2) {
-          return false;
-        }
       }
     }
 
-    async function processarFilaPendente() {
-      const cfg = getConfigAtiva();
-      let fila = JSON.parse(localStorage.getItem("fin_fila_pendente") || "[]");
-      if (!cfg.url || fila.length === 0) return { enviados: 0, restantes: 0 };
+    registros = [...novosItens, ...registros];
+    salvarLocal();
+    agendarNotificacoesNativas();
+    enviarParaPlanilha({ acao: "salvarLote", itens: novosItens });
 
-      let enviados = 0;
-      const restantes = [];
+    document.getElementById("descricao").value = "";
+    document.getElementById("valor").value = "";
+    renderizarTudo();
+    alert(novosItens.length > 1
+      ? `${novosItens.length} parcelas programadas com notificação agendada no visor!`
+      : "Lançamento salvo e sincronizado!");
+  }
 
-      for (const item of fila) {
-        const ok = await enviarRegistroServidor(cfg.url, item);
-        if (ok) {
-          enviados++;
+  function darBaixaParcela(id) {
+    const hojeStr = new Date().toLocaleDateString("pt-BR");
+    registros = registros.map(r => {
+      if (r.id === id) {
+        return { ...r, status: "PAGO", dataPagamento: hojeStr };
+      }
+      return r;
+    });
+
+    salvarLocal();
+    cancelarNotificacaoEspecifica(id);
+    enviarParaPlanilha({ acao: "baixarParcela", id: id });
+    renderizarTudo();
+  }
+
+  function excluirRegistro(id) {
+    if (!confirm("Remover este registro?")) return;
+    registros = registros.filter(r => r.id !== id);
+    salvarLocal();
+    cancelarNotificacaoEspecifica(id);
+    enviarParaPlanilha({ acao: "excluirRegistro", id: id });
+    renderizarTudo();
+  }
+
+  function renderizarTudo() {
+    let entradasReais = 0;
+    let saidasReais = 0;
+    let totalPendente = 0;
+    let qtdPendentes = 0;
+
+    const hojeISO = new Date().toISOString().split("T")[0];
+    let htmlPendentes = "";
+    let htmlExtrato = "";
+    const gruposEmprestimos = {};
+
+    registros.forEach(r => {
+      const val = Number(r.valor) || 0;
+
+      if (r.status === "PAGO") {
+        if (r.tipo === "RECEITA") {
+          entradasReais += val;
+          htmlExtrato += `
+            <div class="item-lista pago-receita">
+              <div>
+                <div style="font-weight:700; font-size:14px;">${escapar(r.descricao)}</div>
+                <div style="font-size:12px; color:var(--muted); margin-top:3px;">
+                  💰 Entrada Confirmada • ${escapar(r.categoria)} • Pago em ${r.dataPagamento || r.vencimento}
+                </div>
+              </div>
+              <div style="display:flex; align-items:center; gap:10px;">
+                <b style="color:var(--green); font-size:15px;">+ ${moeda(val)}</b>
+                <button class="btn-excluir" onclick="excluirRegistro('${r.id}')">✕</button>
+              </div>
+            </div>`;
         } else {
-          restantes.push(item);
+          saidasReais += val;
+          htmlExtrato += `
+            <div class="item-lista pago-despesa">
+              <div>
+                <div style="font-weight:700; font-size:14px;">${escapar(r.descricao)}</div>
+                <div style="font-size:12px; color:var(--muted); margin-top:3px;">
+                  💸 Saída Real Efetivada • ${escapar(r.categoria)} • Pago em ${r.dataPagamento || r.vencimento}
+                </div>
+              </div>
+              <div style="display:flex; align-items:center; gap:10px;">
+                <b style="color:var(--red); font-size:15px;">- ${moeda(val)}</b>
+                <button class="btn-excluir" onclick="excluirRegistro('${r.id}')">✕</button>
+              </div>
+            </div>`;
         }
-      }
-
-      localStorage.setItem("fin_fila_pendente", JSON.stringify(restantes));
-      renderizarUltimos5();
-      return { enviados, restantes: restantes.length };
-    }
-
-    async function buscarDadosPlanilha() {
-      const cfg = getConfigAtiva();
-      if (!cfg.url) return false;
-
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), 9000);
-
-      try {
-        const endpoint = `${cfg.url}?token=${encodeURIComponent(cfg.token)}&_t=${Date.now()}`;
-        const res = await fetch(endpoint, {
-          method: "GET",
-          cache: "no-store",
-          signal: controller.signal
-        });
-        clearTimeout(timer);
-        if (!res.ok) return false;
-
-        const json = await res.json();
-        if (json.status === "success") {
-          if (Array.isArray(json.ultimos5)) {
-            localStorage.setItem("fin_recentes_remotos", JSON.stringify(json.ultimos5.slice(0, 10)));
-          }
-          if (json.resumo) {
-            localStorage.setItem("fin_resumo_cache", JSON.stringify(json.resumo));
-          }
-          renderizarCacheNaTela();
-          return true;
-        }
-        return false;
-      } catch (e) {
-        clearTimeout(timer);
-        return false;
-      }
-    }
-
-    async function sincronizarTudo(mostrarFeedback) {
-      const statusFila = await processarFilaPendente();
-      const leuPlanilha = await buscarDadosPlanilha();
-
-      if (mostrarFeedback) {
-        if (leuPlanilha && statusFila.restantes === 0) {
-          const extra = statusFila.enviados > 0 ? ` (${statusFila.enviados} pendente(s) enviado(s))` : "";
-          mostrarToast(`Sincronizado com a planilha!${extra}`, "ok");
-        } else if (statusFila.enviados > 0 && statusFila.restantes === 0) {
-          mostrarToast(`${statusFila.enviados} lançamento(s) enviado(s) à planilha!`, "ok");
-        } else if (!leuPlanilha && statusFila.restantes > 0) {
-          mostrarToast(`Sem rede agora: ${statusFila.restantes} na fila para envio automático.`, "warn");
-        } else if (!leuPlanilha) {
-          mostrarToast("Rede instável no momento; mantendo dados locais.", "warn");
-        }
-      }
-    }
-
-    document.getElementById("formLancamento").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      if (!tipoSelecionado) return;
-
-      const cfg = getConfigAtiva();
-      const momento = obterDataEHoraDoMomento();
-      const valorNum = parseFloat(document.getElementById("valor").value);
-      const descricaoBase = document.getElementById("descricao").value.trim();
-
-      const registro = {
-        localId: `LOCAL-${momento.timestamp}-${Math.random().toString(36).slice(2, 6)}`,
-        criadoEm: momento.timestamp,
-        token: cfg.token,
-        data: momento.dataIso,
-        dataIso: momento.dataIso,
-        hora: momento.horaStr,
-        dataFormatada: momento.dataBr,
-        tipo: tipoSelecionado,
-        categoria: document.getElementById("categoria").value,
-        descricao: `${descricaoBase} [${momento.horaStr}]`,
-        instituicao: document.getElementById("instituicao").value,
-        formaPagamento: document.getElementById("formaPagamento").value,
-        valor: valorNum,
-        status: "Confirmado"
-      };
-
-      const resumo = JSON.parse(localStorage.getItem("fin_resumo_cache") || '{"saldo":0,"receita":0,"despesa":0}');
-      if (registro.tipo === "ENTRADA") {
-        resumo.receita = Number(resumo.receita || 0) + valorNum;
-        resumo.saldo = Number(resumo.saldo || 0) + valorNum;
-      } else if (registro.tipo === "SAÍDA") {
-        resumo.despesa = Number(resumo.despesa || 0) + valorNum;
-        resumo.saldo = Number(resumo.saldo || 0) - valorNum;
-      }
-      localStorage.setItem("fin_resumo_cache", JSON.stringify(resumo));
-
-      const fila = JSON.parse(localStorage.getItem("fin_fila_pendente") || "[]");
-      fila.unshift(registro);
-      localStorage.setItem("fin_fila_pendente", JSON.stringify(fila));
-
-      renderizarCacheNaTela();
-      document.getElementById("valor").value = "";
-      document.getElementById("descricao").value = "";
-      fecharFormulario();
-      mostrarToast(`Registrado às ${momento.horaStr}! Enviando à planilha...`, "ok");
-
-      const enviado = await enviarRegistroServidor(cfg.url, registro);
-      if (enviado) {
-        const filaAtual = JSON.parse(localStorage.getItem("fin_fila_pendente") || "[]")
-          .filter(item => item.localId !== registro.localId);
-        localStorage.setItem("fin_fila_pendente", JSON.stringify(filaAtual));
-        await buscarDadosPlanilha();
       } else {
-        mostrarToast("Sem conexão: salvo na fila e será enviado assim que entrar na rede.", "warn");
+        totalPendente += val;
+        qtdPendentes++;
+        const atrasado = r.vencimento < hojeISO;
+        const venceHoje = r.vencimento === hojeISO;
+        const dataBr = r.vencimento.split("-").reverse().join("/");
+
+        htmlPendentes += `
+          <div class="item-lista ${atrasado ? 'vencido' : 'pendente'}">
+            <div>
+              <div style="font-weight:700; font-size:14px;">${escapar(r.descricao)}</div>
+              <div style="font-size:12px; color:${atrasado ? '#fca5a5' : 'var(--muted)'}; margin-top:3px;">
+                ${r.tipo === 'EMPRESTIMO' ? '🏦 Empréstimo' : '💳 Boleto/Cartão'} • Vence em <b>${dataBr}</b>
+                ${atrasado ? ' (ATRASADO)' : (venceHoje ? ' (VENCE HOJE)' : '')}
+              </div>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <b style="color:var(--amber); font-size:15px;">${moeda(val)}</b>
+              <button class="btn-baixar" onclick="darBaixaParcela('${r.id}')">✓ Pagar</button>
+              <button class="btn-excluir" onclick="excluirRegistro('${r.id}')">✕</button>
+            </div>
+          </div>`;
+      }
+
+      // Agrupa contratos de empréstimo
+      if (r.tipo === "EMPRESTIMO") {
+        const g = r.grupoId || r.descricao;
+        if (!gruposEmprestimos[g]) {
+          gruposEmprestimos[g] = {
+            nome: r.descricao.replace(/\s*\(\d+\/\d+\)$/, ""),
+            totalContrato: 0,
+            totalPago: 0,
+            pagas: 0,
+            totalParcelas: r.totalParcelas || 1
+          };
+        }
+        gruposEmprestimos[g].totalContrato += val;
+        if (r.status === "PAGO") {
+          gruposEmprestimos[g].totalPago += val;
+          gruposEmprestimos[g].pagas += 1;
+        }
       }
     });
 
-    function mostrarToast(msg, tipo) {
-      const el = document.getElementById("toast");
-      el.textContent = msg;
-      el.className = `toast ${tipo}`;
-      clearTimeout(window._toastTimer);
-      window._toastTimer = setTimeout(() => { el.style.display = "none"; }, 3500);
+    const saldoReal = entradasReais - saidasReais;
+    document.getElementById("kpi-saldo").innerText = moeda(saldoReal);
+    document.getElementById("kpi-saldo").style.color = saldoReal >= 0 ? "var(--blue)" : "var(--red)";
+    document.getElementById("kpi-entradas").innerText = moeda(entradasReais);
+    document.getElementById("kpi-saidas").innerText = moeda(saidasReais);
+    document.getElementById("kpi-pendente").innerText = moeda(totalPendente);
+
+    const badge = document.getElementById("contador-pagar");
+    if (qtdPendentes > 0) {
+      badge.innerText = qtdPendentes;
+      badge.style.display = "inline-block";
+    } else {
+      badge.style.display = "none";
     }
 
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker.register("./sw.js").catch(() => {});
+    document.getElementById("lista-pendentes").innerHTML =
+      htmlPendentes || "<p style='color:var(--muted); font-size:13px; text-align:center; padding:16px;'>Nenhum boleto ou parcela pendente.</p>";
+
+    document.getElementById("lista-extrato").innerHTML =
+      htmlExtrato || "<p style='color:var(--muted); font-size:13px; text-align:center; padding:16px;'>Nenhuma entrada ou saída efetivada ainda.</p>";
+
+    let htmlEmp = "";
+    Object.values(gruposEmprestimos).forEach(emp => {
+      const faltaPagar = emp.totalContrato - emp.totalPago;
+      const pct = Math.min(100, Math.round((emp.totalPago / (emp.totalContrato || 1)) * 100));
+      htmlEmp += `
+        <div class="card" style="background:var(--input); margin-bottom:10px;">
+          <div style="display:flex; justify-content:space-between; font-weight:700; font-size:14px;">
+            <span>🏦 ${escapar(emp.nome)}</span>
+            <span style="color:#c084fc;">${emp.pagas}/${emp.totalParcelas} pagas (${pct}%)</span>
+          </div>
+          <div class="barra-progresso"><div class="barra-fill" style="width:${pct}%;"></div></div>
+          <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--muted); margin-top:6px;">
+            <span>Já Amortizado: <b style="color:var(--green);">${moeda(emp.totalPago)}</b></span>
+            <span>Saldo Devedor: <b style="color:var(--amber);">${moeda(faltaPagar)}</b></span>
+          </div>
+        </div>`;
+    });
+
+    document.getElementById("lista-emprestimos").innerHTML =
+      htmlEmp || "<p style='color:var(--muted); font-size:13px; text-align:center; padding:16px;'>Nenhum empréstimo cadastrado.</p>";
+  }
+
+  /* ============================================================
+     NOTIFICAÇÕES NO VISOR DO CELULAR SEM DEPENDER DE ABRIR O APP
+     ============================================================ */
+  async function ativarNotificacoesVisor() {
+    // 1. Android APK Nativo (Capacitor LocalNotifications)
+    if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications) {
+      const perm = await window.Capacitor.Plugins.LocalNotifications.requestPermissions();
+      if (perm.display === "granted") {
+        await agendarNotificacoesNativas();
+        alert("Notificações nativas ativadas! Os alertas aparecerão no visor do celular às 08:00 no dia de cada vencimento.");
+      }
+      return;
+    }
+
+    // 2. Navegador PC / Mobile
+    if ("Notification" in window) {
+      const res = await Notification.requestPermission();
+      if (res === "granted") {
+        verificarAlertasNavegador();
+        alert("Notificações ativadas neste dispositivo!");
+      }
+    }
+  }
+
+  function gerarIdNumerico_(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = ((hash << 5) - hash) + str.charCodeAt(i);
+      hash |= 0;
+    }
+    return Math.abs(hash) % 2000000000;
+  }
+
+  async function agendarNotificacoesNativas() {
+    if (!(window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications)) {
+      verificarAlertasNavegador();
+      return;
+    }
+
+    const LocalNotifications = window.Capacitor.Plugins.LocalNotifications;
+    const pendentes = registros.filter(r => r.status === "PENDENTE" && r.vencimento);
+    const notificacoes = [];
+
+    pendentes.forEach(p => {
+      const [ano, mes, dia] = p.vencimento.split("-").map(Number);
+      const dataAlarme = new Date(ano, mes - 1, dia, 8, 0, 0); // 08:00 da manhã no dia do vencimento
+      if (dataAlarme > new Date()) {
+        notificacoes.push({
+          id: gerarIdNumerico_(p.id),
+          title: p.tipo === "EMPRESTIMO" ? "🏦 Parcela de Empréstimo Vence Hoje" : "💳 Boleto / Parcela Vence Hoje",
+          body: `${p.descricao} — Valor: ${moeda(p.valor)}. Toque para dar baixa após pagar.`,
+          schedule: { at: dataAlarme },
+          sound: null,
+          smallIcon: "ic_stat_icon_config_sample"
+        });
+      }
+    });
+
+    if (notificacoes.length > 0) {
+      await LocalNotifications.schedule({ notifications: notificacoes });
+    }
+  }
+
+  async function cancelarNotificacaoEspecifica(idStr) {
+    if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications) {
+      await window.Capacitor.Plugins.LocalNotifications.cancel({
+        notifications: [{ id: gerarIdNumerico_(idStr) }]
       });
     }
-  </script>
+  }
+
+  function verificarAlertasNavegador() {
+    if (!("Notification" in window) || Notification.permission !== "granted") return;
+    const hojeISO = new Date().toISOString().split("T")[0];
+    const vencendo = registros.filter(r => r.status === "PENDENTE" && r.vencimento <= hojeISO);
+    if (vencendo.length > 0) {
+      new Notification(`⚠️ ${vencendo.length} conta(s) pendente(s) para pagamento`, {
+        body: `${vencendo[0].descricao} (${moeda(vencendo[0].valor)}) aguardando baixa.`
+      });
+    }
+  }
+
+  /* ============================================================
+     SINCRONIZAÇÃO SEGURA COM GOOGLE SHEETS (SEM PERDA DE DADOS)
+     ============================================================ */
+  function salvarLocal() {
+    localStorage.setItem("fin_real_registros", JSON.stringify(registros));
+  }
+
+  async function enviarParaPlanilha(payload) {
+    try {
+      await fetch(API_URL, {
+        method: "POST",
+        mode: "no-cors",
+        body: JSON.stringify(payload)
+      });
+    } catch (e) {
+      filaPendenteSync.push(payload);
+      localStorage.setItem("fin_real_fila", JSON.stringify(filaPendenteSync));
+    }
+  }
+
+  async function sincronizarComPlanilha() {
+    const badge = document.getElementById("badge-sync");
+    badge.innerText = "↻ Sincronizando...";
+
+    if (filaPendenteSync.length > 0) {
+      const copia = [...filaPendenteSync];
+      filaPendenteSync = [];
+      localStorage.setItem("fin_real_fila", "[]");
+      for (const item of copia) {
+        await enviarParaPlanilha(item);
+      }
+    }
+
+    try {
+      const resp = await fetch(API_URL);
+      const json = await resp.json();
+      if (json.status === "ok" && Array.isArray(json.registros)) {
+        registros = json.registros;
+        salvarLocal();
+        agendarNotificacoesNativas();
+        renderizarTudo();
+        badge.innerText = "● Nuvem Sincronizada";
+      }
+    } catch (e) {
+      badge.innerText = "● Modo Offline (Salvo no Aparelho)";
+    }
+  }
+
+  sincronizarComPlanilha();
+</script>
 </body>
 </html>
